@@ -18,7 +18,8 @@
 运行方式：
 
 ```bash
-sudo ./bootstrap-desktop.sh && exec zsh
+sudo ./bootstrap-desktop.sh
+exec zsh
 ```
 
 说明：
@@ -53,5 +54,10 @@ update-xray-geofiles
 运行方式：
 
 ```bash
-sudo ./bootstrap-vps.sh && exec zsh
+./bootstrap-vps.sh
+exec zsh
 ```
+
+说明：
+- `bootstrap-vps.sh` 预期在 `root` 下直接执行
+- 很多 VPS 镜像默认没有安装 `sudo`
