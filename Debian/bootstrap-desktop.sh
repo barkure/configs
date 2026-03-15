@@ -50,6 +50,31 @@ run_as_target_user() {
   sudo -u "${TARGET_USER}" -H "$@"
 }
 
+wait_for_xray_proxy() {
+  local attempts=30
+  local sleep_seconds=1
+  local socks_port=10808
+  local http_port=10809
+
+  if ! command -v ss >/dev/null 2>&1; then
+    log "Skipping Xray readiness check: ss not available"
+    return 0
+  fi
+
+  for ((i = 1; i <= attempts; i++)); do
+    if ss -ltn '( sport = :10808 or sport = :10809 )' 2>/dev/null | grep -q "127.0.0.1:${socks_port}" &&
+      ss -ltn '( sport = :10808 or sport = :10809 )' 2>/dev/null | grep -q "127.0.0.1:${http_port}"; then
+      log "Xray proxy ports are ready"
+      return 0
+    fi
+
+    sleep "${sleep_seconds}"
+  done
+
+  echo "Timed out waiting for Xray proxy ports ${socks_port} and ${http_port}." >&2
+  exit 1
+}
+
 export_proxy_env() {
   export http_proxy="${XRAY_HTTP_PROXY}"
   export https_proxy="${XRAY_HTTP_PROXY}"
@@ -316,6 +341,7 @@ main() {
   export DEBIAN_FRONTEND=noninteractive
 
   install_xray
+  wait_for_xray_proxy
   export_proxy_env
 
   log "Updating apt cache"
