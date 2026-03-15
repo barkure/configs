@@ -214,7 +214,8 @@ install_node_with_fnm() {
   log "Installing Node.js 24 and enabling corepack for ${TARGET_USER}"
   run_as_target_user_with_proxy PATH="${TARGET_HOME}/.local/share/fnm:${TARGET_HOME}/.local/bin:${PATH}" \
     bash -lc '
-      export FNM_DIR="$HOME/.local/share/fnm"
+      export FNM_PATH="$HOME/.local/share/fnm"
+      export PATH="$FNM_PATH:$PATH"
       eval "$(fnm env --shell bash)"
       fnm install 24
       fnm default 24
@@ -272,9 +273,9 @@ export NO_PROXY="127.0.0.1,localhost,::1"
 export PATH="$HOME/.local/bin:$PATH"
 
 # fnm
-export FNM_DIR="$HOME/.local/share/fnm"
-if [[ -d "$FNM_DIR" ]]; then
-  export PATH="$FNM_DIR:$PATH"
+export FNM_PATH="$HOME/.local/share/fnm"
+if [[ -d "$FNM_PATH" ]]; then
+  export PATH="$FNM_PATH:$PATH"
 fi
 
 # oh-my-zsh
