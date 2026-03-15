@@ -50,6 +50,19 @@ run_as_target_user() {
   sudo -u "${TARGET_USER}" -H "$@"
 }
 
+run_as_target_user_with_proxy() {
+  sudo -u "${TARGET_USER}" -H env \
+    http_proxy="${XRAY_HTTP_PROXY}" \
+    https_proxy="${XRAY_HTTP_PROXY}" \
+    HTTP_PROXY="${XRAY_HTTP_PROXY}" \
+    HTTPS_PROXY="${XRAY_HTTP_PROXY}" \
+    all_proxy="${XRAY_SOCKS_PROXY}" \
+    ALL_PROXY="${XRAY_SOCKS_PROXY}" \
+    no_proxy="${XRAY_NO_PROXY}" \
+    NO_PROXY="${XRAY_NO_PROXY}" \
+    "$@"
+}
+
 wait_for_xray_proxy() {
   local attempts=30
   local sleep_seconds=1
@@ -185,7 +198,7 @@ install_uv() {
   fi
 
   log "Installing uv for ${TARGET_USER}"
-  run_as_target_user sh -c "$(curl -fsSL https://astral.sh/uv/install.sh)"
+  run_as_target_user_with_proxy sh -c "$(curl -fsSL https://astral.sh/uv/install.sh)"
 }
 
 install_fnm() {
@@ -194,12 +207,12 @@ install_fnm() {
   fi
 
   log "Installing fnm for ${TARGET_USER}"
-  run_as_target_user env SHELL=/usr/bin/zsh bash -c "$(curl -fsSL https://fnm.vercel.app/install)"
+  run_as_target_user_with_proxy SHELL=/usr/bin/zsh bash -c "$(curl -fsSL https://fnm.vercel.app/install)"
 }
 
 install_node_with_fnm() {
   log "Installing Node.js 24 and enabling corepack for ${TARGET_USER}"
-  run_as_target_user env PATH="${TARGET_HOME}/.local/share/fnm:${TARGET_HOME}/.local/bin:${PATH}" \
+  run_as_target_user_with_proxy PATH="${TARGET_HOME}/.local/share/fnm:${TARGET_HOME}/.local/bin:${PATH}" \
     bash -lc '
       export FNM_DIR="$HOME/.local/share/fnm"
       eval "$(fnm env --shell bash)"
