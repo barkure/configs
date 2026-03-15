@@ -1,0 +1,14 @@
+[Unit]
+Description=Xray Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=XRAY_LOCATION_ASSET=/usr/local/share/xray
+ExecStart=/usr/local/bin/xray run -config /etc/xray/config.json
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
