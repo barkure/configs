@@ -11,6 +11,7 @@
 - 安装并配置 Xray
 - 安装 `uv`、`fnm`、`Docker` 等工具
 - 使用 `fnm` 安装 Node.js 24，并执行 `corepack enable`
+- 在 `~/.zshrc` 中写入 `PNPM_HOME`，让 `pnpm add -g` 可直接使用
 - 安装并配置 `oh-my-zsh`
 - 安装 `update-xray-geofiles` 到 `~/.local/bin/`
 - 配置环境变量和常用 Alias
@@ -26,6 +27,7 @@ exec zsh
 - 必须从目标用户下通过 `sudo` 执行，脚本会使用 `SUDO_USER` 配置该用户环境
 - `bootstrap-desktop.sh` 会读取 `Debian/xray/` 下的文件并安装到系统目录
 - `Debian/xray/` 下必须存在 `config.json`，可参照 `config.json.example` 编写，更多例子见 [Xray-examples](https://github.com/XTLS/Xray-examples)
+- 脚本会将 `PNPM_HOME` 设为 `~/.local/share/pnpm` 并加入 `PATH`
 
 ### 关于 Xray
 Xray 默认安装路径：
@@ -48,6 +50,7 @@ update-xray-geofiles
 - 安装基础工具，如 `btop`、`curl`、`fd-find`、`git`、`unzip`、`zsh`
 - 按可用性安装 `eza`、`zoxide`、`zsh-autosuggestions`、`zsh-syntax-highlighting`
 - 安装 `uv`、`Docker` 等工具
+- 在 `~/.zshrc` 中预留 `PNPM_HOME`
 - 安装并配置 `oh-my-zsh`
 - 配置环境变量和常用 Alias
 

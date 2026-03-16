@@ -12,6 +12,7 @@
 │   ├── xray/
 │   └── README.md
 └── macOS/
+    ├── .zshrc
     ├── ghostty/
     ├── scripts/
     └── zsh-theme/
@@ -36,6 +37,7 @@
 - 安装和配置 Xray
 - 安装 `uv`、`fnm`、`Docker`
 - 使用 `fnm` 安装 Node.js 24，并执行 `corepack enable`
+- 为 `pnpm` 写入 `PNPM_HOME`，让 `pnpm add -g` 可直接使用
 - 安装 `oh-my-zsh`
 - 为目标用户写入常用 `~/.zshrc`
 
@@ -60,6 +62,7 @@ exec zsh
 - 安装基础工具和 shell 增强组件
 - 安装 `uv`
 - 安装 Docker
+- 在 `~/.zshrc` 中预留 `PNPM_HOME`
 - 安装 `oh-my-zsh`
 - 写入 root 的 `~/.zshrc`
 
@@ -97,6 +100,7 @@ update-xray-geofiles
 
 `macOS/` 目前保存的是我在 macOS 上使用的终端和 shell 相关配置：
 
+- `.zshrc`：macOS 下使用的 zsh 配置
 - `ghostty/config`：Ghostty 主配置
 - `ghostty/themes/passion`：Ghostty 主题
 - `zsh-theme/passion.zsh-theme`：自定义 zsh 主题
@@ -112,6 +116,18 @@ update-xray-geofiles
 - 简单的窗口边距和 shell integration 配置
 
 如果你也在使用 Ghostty，可以将对应文件链接或复制到自己的配置目录中。
+
+如果你在 macOS 上使用 `pnpm` 全局安装命令，shell 配置里至少要有这一段：
+
+```zsh
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+```
+
+这样 `pnpm add -g <pkg>` 安装出的可执行文件才会直接进入 `PATH`。
 
 ### macOS 下更新 Xray geofiles
 

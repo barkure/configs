@@ -272,6 +272,13 @@ export NO_PROXY="127.0.0.1,localhost,::1"
 # User-local binaries (include uv/uvx).
 export PATH="$HOME/.local/bin:$PATH"
 
+# pnpm global bin directory.
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
 # fnm
 export FNM_PATH="$HOME/.local/share/fnm"
 if [[ -d "$FNM_PATH" ]]; then

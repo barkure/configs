@@ -93,6 +93,13 @@ write_zshrc() {
 # User-local binaries (include uv/uvx).
 export PATH="$HOME/.local/bin:$PATH"
 
+# pnpm global bin directory.
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="candy"

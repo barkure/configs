@@ -21,6 +21,13 @@ export ALL_PROXY="$all_proxy"
 # User-local binaries (include uv/uvx).
 export PATH="$HOME/.local/bin:$PATH"
 
+# pnpm global bin directory.
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
 # Android SDK platform-tools (adb).
 export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
