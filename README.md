@@ -9,12 +9,10 @@
 ├── Debian/
 │   ├── bootstrap-desktop.sh
 │   ├── bootstrap-vps.sh
-│   ├── xray/
-│   └── README.md
+│   └── xray/
 └── macOS/
     ├── .zshrc
     ├── ghostty/
-    ├── scripts/
     └── zsh-theme/
 ```
 
