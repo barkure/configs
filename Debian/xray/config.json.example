@@ -5,18 +5,28 @@
   "inbounds": [
     {
       "tag": "socks-in",
-      "port": 10808,
       "listen": "127.0.0.1",
+      "port": 10808,
       "protocol": "socks",
       "settings": {
+        "auth": "noauth",
         "udp": true
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
+        ]
       }
     },
     {
       "tag": "http-in",
-      "port": 10809,
       "listen": "127.0.0.1",
-      "protocol": "http"
+      "port": 10809,
+      "protocol": "http",
+      "settings": {}
     }
   ],
   "outbounds": [
@@ -31,7 +41,8 @@
             "users": [
               {
                 "id": "00000000-0000-0000-0000-000000000000",
-                "encryption": "none"
+                "encryption": "none",
+                "flow": ""
               }
             ]
           }
@@ -51,53 +62,77 @@
     },
     {
       "tag": "direct",
-      "protocol": "freedom"
+      "protocol": "freedom",
+      "settings": {}
     },
     {
       "tag": "block",
-      "protocol": "blackhole"
+      "protocol": "blackhole",
+      "settings": {}
     }
   ],
+  "dns": {
+    "hosts": {
+      "dns.google": "8.8.8.8",
+      "dns.pub": "119.29.29.29",
+      "dns.alidns.com": "223.5.5.5",
+      "geosite:category-ads-all": "127.0.0.1"
+    },
+    "servers": [
+      {
+        "address": "https://1.1.1.1/dns-query",
+        "domains": [
+          "geosite:geolocation-!cn"
+        ],
+        "expectIPs": [
+          "geoip:!cn"
+        ]
+      },
+      {
+        "address": "114.114.114.114",
+        "port": 53,
+        "domains": [
+          "geosite:cn",
+          "geosite:category-games@cn"
+        ],
+        "expectIPs": [
+          "geoip:cn"
+        ],
+        "skipFallback": true
+      }
+    ]
+  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
         "type": "field",
+        "outboundTag": "block",
         "domain": [
           "geosite:category-ads-all"
-        ],
-        "outboundTag": "block"
+        ]
       },
       {
         "type": "field",
+        "outboundTag": "direct",
         "domain": [
           "geosite:private",
-          "geosite:apple-cn",
-          "geosite:google-cn",
-          "geosite:tld-cn",
-          "geosite:cn"
-        ],
-        "outboundTag": "direct"
+          "geosite:cn",
+          "geosite:category-games@cn"
+        ]
       },
       {
         "type": "field",
+        "outboundTag": "direct",
         "ip": [
           "geoip:private",
           "geoip:cn"
-        ],
-        "outboundTag": "direct"
-      },
-      {
-        "type": "field",
-        "domain": [
-          "geosite:geolocation-!cn"
-        ],
-        "outboundTag": "proxy"
+        ]
       },
       {
         "type": "field",
         "network": "tcp,udp",
-        "outboundTag": "direct"
+        "outboundTag": "proxy"
       }
     ]
   }

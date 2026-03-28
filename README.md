@@ -26,12 +26,11 @@
 - `bootstrap-vps.sh`：初始化 Debian/Ubuntu VPS
 - `xray/`：Xray 二进制、service、示例配置和 geofiles
 
-更详细的脚本说明见 [Debian/README.md](./Debian/README.md)。
-
 ### bootstrap-desktop.sh
 
 适合新装好的 Debian/Ubuntu 桌面设备，主要会做这些事：
 
+- 安装 Xray 并设置代理
 - 安装基础工具：`btop`、`curl`、`fd-find`、`git`、`unzip`、`zsh`
 - 按系统可用性安装：`eza`、`zoxide`、`zsh-autosuggestions`、`zsh-syntax-highlighting`
 - 安装和配置 Xray
@@ -41,8 +40,9 @@
 - 安装 `oh-my-zsh`
 - 为目标用户写入常用 `~/.zshrc`
 
-运行方式：
+**运行前请参照 `Debian/xray/config.json.example`，生成 `config.json`，并置于同一目录下。**
 
+运行方式：
 ```bash
 cd Debian
 sudo ./bootstrap-desktop.sh
@@ -52,8 +52,7 @@ exec zsh
 注意：
 
 - 需要从目标用户下用 `sudo` 执行，脚本会根据 `SUDO_USER` 配置对应账号
-- 如果要安装 Xray，请先准备 `Debian/xray/config.json`
-- 仓库里只保留了 `config.json.example`，真实配置不会提交到 Git
+- 关于 Xray 的更多操作和信息，详见 [XTLS/Xray-install](https://github.com/XTLS/Xray-install/blob/main/README_zh-Hans.md)
 
 ### bootstrap-vps.sh
 
@@ -67,7 +66,6 @@ exec zsh
 - 写入 root 的 `~/.zshrc`
 
 运行方式：
-
 ```bash
 cd Debian
 sudo ./bootstrap-vps.sh
@@ -79,23 +77,6 @@ exec zsh
 - 该脚本预期在 `root` 环境中运行
 - 某些 VPS 镜像默认没有 `sudo`，这时可直接以 root 执行
 
-### Xray
-
-仓库中提供了 Xray 相关的安装文件和更新脚本。
-
-Debian 桌面脚本会默认把这些文件安装到：
-
-- 二进制：`/usr/local/bin/xray`
-- 配置：`/etc/xray/config.json`
-- geofiles：`/usr/local/share/xray/geoip.dat`、`/usr/local/share/xray/geosite.dat`
-- systemd 服务：`/etc/systemd/system/xray.service`
-
-如果只想更新 geofiles，可在安装完成后执行：
-
-```bash
-update-xray-geofiles
-```
-
 ## macOS
 
 `macOS/` 目前保存的是我在 macOS 上使用的终端和 shell 相关配置：
@@ -104,7 +85,6 @@ update-xray-geofiles
 - `ghostty/config`：Ghostty 主配置
 - `ghostty/themes/passion`：Ghostty 主题
 - `zsh-theme/passion.zsh-theme`：自定义 zsh 主题
-- `scripts/update-xray-geofiles.sh`：更新 Homebrew 安装的 Xray geofiles，并重启服务
 
 ### Ghostty
 

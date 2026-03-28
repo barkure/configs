@@ -103,7 +103,7 @@ install_xray() {
   local xray_source_dir="${SCRIPT_DIR}/xray"
   local xray_binary_source="${xray_source_dir}/xray"
   local xray_service_source="${xray_source_dir}/xray.service"
-  local xray_config_dir="/etc/xray"
+  local xray_config_dir="/usr/local/etc/xray"
   local xray_asset_dir="/usr/local/share/xray"
 
   if [[ ! -d "${xray_source_dir}" ]]; then
