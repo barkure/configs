@@ -22,7 +22,7 @@
 
 - `bootstrap-desktop.sh`：初始化本地 Debian/Ubuntu 桌面环境
 - `bootstrap-vps.sh`：初始化 Debian/Ubuntu VPS
-- `xray/`：Xray 二进制、service、示例配置和 geofiles
+- `xray/`：Xray 二进制、service、示例配置和 geofiles，geofiles 来自 [Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat)
 
 ### bootstrap-desktop.sh
 
@@ -79,6 +79,6 @@ exec zsh
 `macOS/` 目前保存的是我在 macOS 上使用的终端和 shell 相关配置：
 
 - `.zshrc`：macOS 下使用的 zsh 配置
-- `ghostty/config`：Ghostty 主配置
+- `ghostty/config`：Ghostty 配置
 - `ghostty/themes/passion`：Ghostty 主题
 - `zsh-theme/passion.zsh-theme`：自定义 zsh 主题
