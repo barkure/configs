@@ -1,14 +1,16 @@
 # configs
 
-我的个人配置仓库，主要用来保存 Debian/Ubuntu 和 macOS 上常用的环境初始化脚本、终端配置，以及 Xray 相关文件。
+我的个人配置仓库，主要用来保存 Debian/Ubuntu、macOS 和 Windows 上常用的环境初始化脚本、终端配置，以及 Xray 相关文件。
 
-## 目录结构
+# 目录结构
 
 ```text
 .
 ├── Debian/
 │   ├── bootstrap-desktop.sh
 │   ├── bootstrap-vps.sh
+│   └── xray/
+├── Windows/
 │   └── xray/
 └── macOS/
     ├── .zshrc
@@ -78,7 +80,15 @@ exec zsh
 
 `macOS/` 目前保存的是我在 macOS 上使用的终端和 shell 相关配置：
 
-- `.zshrc`：macOS 下使用的 zsh 配置
+- `.zshrc`：macOS 下的 zsh 配置
 - `ghostty/config`：Ghostty 配置
 - `ghostty/themes/passion`：Ghostty 主题
 - `zsh-theme/passion.zsh-theme`：自定义 zsh 主题
+
+## Windows
+
+`Windows/xray/` 保存的是 Windows 下使用 Xray 的示例配置和启停脚本：
+
+1. 安装 Xray：`winget install XTLS.Xray-core`
+2. 修改 `config.json.example`，置于 `$HOME\.config\xray\config.json`
+3. `start-xray.ps1` 和 `stop-xray.ps1` 可放在桌面，便于操作
