@@ -12,11 +12,13 @@ export EDITOR=nano
 export http_proxy="http://127.0.0.1:10809"
 export https_proxy="http://127.0.0.1:10809"
 export all_proxy="socks5://127.0.0.1:10808"
+export no_proxy="127.0.0.1,localhost,::1"
 
 # Uppercase variants for tools that expect them.
 export HTTP_PROXY="$http_proxy"
 export HTTPS_PROXY="$https_proxy"
 export ALL_PROXY="$all_proxy"
+export NO_PROXY="$no_proxy"
 
 # User-local binaries (include uv/uvx).
 export PATH="$HOME/.local/bin:$PATH"
