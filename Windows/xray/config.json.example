@@ -122,6 +122,7 @@
         "outboundTag": "direct",
         "domain": [
           "geosite:private",
+          "geosite:cn",
           "geosite:apple-cn",
           "geosite:google-cn",
           "geosite:tld-cn",
@@ -138,8 +139,9 @@
       {
         "type": "field",
         "outboundTag": "direct",
-        "domain": [
-          "geosite:cn"
+        "ip": [
+          "geoip:cn",
+          "geoip:private"
         ]
       },
       {
