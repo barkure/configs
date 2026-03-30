@@ -7,8 +7,7 @@
 ```text
 .
 ├── Debian/
-│   ├── bootstrap-desktop.sh
-│   ├── bootstrap-vps.sh
+│   ├── bootstrap.sh
 │   └── xray/
 ├── Windows/
 │   └── xray/
@@ -20,61 +19,40 @@
 
 ## Debian
 
-`Debian/` 里主要是两类内容：
+`Debian/` 里主要是这些内容：
 
-- `bootstrap-desktop.sh`：初始化本地 Debian/Ubuntu 桌面环境
-- `bootstrap-vps.sh`：初始化 Debian/Ubuntu VPS
+- `bootstrap.sh`：统一的 Debian/Ubuntu 初始化脚本
 - `xray/`：Xray 二进制、service、示例配置和 geofiles，geofiles 来自 [Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat)
 
-### bootstrap-desktop.sh
+### bootstrap.sh
 
-适合新装好的 Debian/Ubuntu 桌面设备，主要会做这些事：
+适合新装好的 Debian/Ubuntu 环境：
 
-- 安装 Xray 并设置代理
-- 安装基础工具：`btop`、`curl`、`fd-find`、`git`、`unzip`、`zsh`
-- 按系统可用性安装：`eza`、`zoxide`、`zsh-autosuggestions`、`zsh-syntax-highlighting`
-- 安装和配置 Xray
-- 安装 `uv`、`fnm`、`Docker`
-- 使用 `fnm` 安装 Node.js 24，并执行 `corepack enable`
-- 为 `pnpm` 写入 `PNPM_HOME`，让 `pnpm add -g` 可直接使用
-- 安装 `oh-my-zsh`
-- 为目标用户写入常用 `~/.zshrc`
-
-**运行前请参照 `Debian/xray/config.json.example`，生成 `config.json`，并置于同一目录下。**
+- 传入 `--with-xray` 时，脚本会先完成 Xray 部署并启用本地代理，再通过该代理执行后续联网安装流程
+- 安装基础工具：`btop`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`nano`、`ripgrep`、`wget`、`zoxide`、`unzip`、`zsh`
+- 安装 `oh-my-zsh` 和 zsh 插件：`zsh-autosuggestions`、`zsh-syntax-highlighting`
+- 安装 `uv`、`fnm`、`Docker`、`LazyDocker`
+- 使用 `fnm` 安装 Node.js 24，执行 `corepack enable` 启用 `pnpm`，并写入 `PNPM_HOME`
 
 运行方式：
 ```bash
 cd Debian
-sudo ./bootstrap-desktop.sh
+sudo ./bootstrap.sh
+exec zsh
+```
+
+如需代理，请参照 `Debian/xray/config.json.example` 生成 `config.json`，并置于 `Debian/xray/` 目录下，然后运行：
+```bash
+cd Debian
+sudo ./bootstrap.sh --with-xray
 exec zsh
 ```
 
 注意：
 
-- 需要从目标用户下用 `sudo` 执行，脚本会根据 `SUDO_USER` 配置对应账号
+- 从目标用户下用 `sudo` 执行时，脚本会根据 `SUDO_USER` 配置对应账号
+- 直接以 root 运行时，脚本会配置 root
 - 关于 Xray 的更多操作和信息，详见 [XTLS/Xray-install](https://github.com/XTLS/Xray-install/blob/main/README_zh-Hans.md)
-
-### bootstrap-vps.sh
-
-适合在 Debian/Ubuntu VPS 上直接初始化 root 环境，主要包含：
-
-- 安装基础工具和 shell 增强组件
-- 安装 `uv`
-- 安装 Docker
-- 在 `~/.zshrc` 中预留 `PNPM_HOME`
-- 安装 `oh-my-zsh`
-- 写入 root 的 `~/.zshrc`
-
-运行方式：
-```bash
-cd Debian
-sudo ./bootstrap-vps.sh
-exec zsh
-```
-
-说明：
-
-- 该脚本预期在 `root` 环境中运行
 
 ## macOS
 
