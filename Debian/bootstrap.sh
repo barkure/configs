@@ -440,6 +440,7 @@ write_target_zshrc() {
 
   cat >"${zshrc_path}" <<EOF
 ${proxy_block}
+
 # Editor settings
 alias nano="\$(command -v nano)"
 export VISUAL=nano
