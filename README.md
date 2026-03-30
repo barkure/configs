@@ -29,6 +29,7 @@
 适合新装好的 Debian/Ubuntu 环境：
 
 - 传入 `--with-xray` 时，脚本会先完成 Xray 部署并启用本地代理，再通过该代理执行后续联网安装流程
+- 传入 `--with-proxy` 时，脚本只启用代理环境，不安装 Xray；默认使用 `socks5://127.0.0.1:10808` 和 `http://127.0.0.1:10809`
 - 安装基础工具：`btop`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`nano`、`ripgrep`、`wget`、`zoxide`、`unzip`、`zsh`
 - 安装 `oh-my-zsh` 和 zsh 插件：`zsh-autosuggestions`、`zsh-syntax-highlighting`
 - 安装 `uv`、`fnm`、`Docker`、`LazyDocker`、`LazyGit`
@@ -41,10 +42,17 @@ sudo ./bootstrap.sh
 exec zsh
 ```
 
-如需代理，请参照 `Debian/xray/config.json.example` 生成 `config.json`，并置于 `Debian/xray/` 目录下，然后运行：
+如需安装并启用 Xray 代理，请参照 `Debian/xray/config.json.example` 生成 `config.json`，并置于 `Debian/xray/` 目录下，然后运行：
 ```bash
 cd Debian
 sudo ./bootstrap.sh --with-xray
+exec zsh
+```
+
+如果代理已由其他环境提供，例如 WSL 中复用宿主机代理，则直接运行：
+```bash
+cd Debian
+sudo ./bootstrap.sh --with-proxy
 exec zsh
 ```
 

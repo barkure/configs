@@ -8,6 +8,7 @@ XRAY_HTTP_PROXY="http://127.0.0.1:10809"
 XRAY_NO_PROXY="127.0.0.1,localhost,::1"
 
 WITH_XRAY=0
+WITH_PROXY=0
 TARGET_USER=""
 TARGET_HOME=""
 IS_ROOT_TARGET=0
@@ -19,10 +20,11 @@ log() {
 usage() {
   cat <<'EOF'
 Usage:
-  sudo ./bootstrap.sh [--with-xray]
+  sudo ./bootstrap.sh [--with-xray] [--with-proxy]
 
 Options:
   --with-xray   Install and enable Xray proxy.
+  --with-proxy  Enable proxy environment only, without installing Xray.
   -h, --help    Show this help message.
 EOF
 }
@@ -32,6 +34,9 @@ parse_args() {
     case "$1" in
       --with-xray)
         WITH_XRAY=1
+        ;;
+      --with-proxy)
+        WITH_PROXY=1
         ;;
       -h|--help)
         usage
@@ -111,7 +116,7 @@ run_as_target_user_with_proxy() {
 }
 
 run_as_target_user_for_network() {
-  if [[ "${WITH_XRAY}" -eq 1 ]]; then
+  if [[ "${WITH_XRAY}" -eq 1 || "${WITH_PROXY}" -eq 1 ]]; then
     run_as_target_user_with_proxy "$@"
   else
     run_as_target_user "$@"
@@ -150,7 +155,7 @@ export_proxy_env() {
 }
 
 zsh_proxy_block() {
-  if [[ "${WITH_XRAY}" -ne 1 ]]; then
+  if [[ "${WITH_XRAY}" -ne 1 && "${WITH_PROXY}" -ne 1 ]]; then
     return 0
   fi
 
@@ -212,12 +217,18 @@ install_xray() {
 }
 
 configure_xray_if_requested() {
-  if [[ "${WITH_XRAY}" -ne 1 ]]; then
+  if [[ "${WITH_XRAY}" -eq 1 ]]; then
+    install_xray
+    wait_for_xray_proxy
+    export_proxy_env
     return 0
   fi
 
-  install_xray
-  wait_for_xray_proxy
+  if [[ "${WITH_PROXY}" -ne 1 ]]; then
+    return 0
+  fi
+
+  log "Enabling proxy environment without installing Xray"
   export_proxy_env
 }
 
