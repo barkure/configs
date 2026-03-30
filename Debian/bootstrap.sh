@@ -277,7 +277,7 @@ install_lazydocker() {
     return 0
   fi
 
-  local arch archive_arch version tmp_dir
+  local arch archive_arch version latest_api tmp_dir
   arch="$(dpkg --print-architecture)"
 
   case "${arch}" in
@@ -296,15 +296,64 @@ install_lazydocker() {
       ;;
   esac
 
-  version="0.24.1"
+  latest_api="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
+  version="$(curl -fsSL "${latest_api}" | sed -n 's/.*"tag_name":[[:space:]]*"v\([^"]*\)".*/\1/p' | head -n1)"
+  if [[ -z "${version}" ]]; then
+    echo "Unable to determine latest lazydocker version." >&2
+    exit 1
+  fi
+
   tmp_dir="$(mktemp -d)"
 
-  log "Installing lazydocker"
+  log "Installing lazydocker ${version}"
   curl -fsSL \
     "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_Linux_${archive_arch}.tar.gz" \
     -o "${tmp_dir}/lazydocker.tar.gz"
   tar -xzf "${tmp_dir}/lazydocker.tar.gz" -C "${tmp_dir}" lazydocker
   install -m 0755 "${tmp_dir}/lazydocker" /usr/local/bin/lazydocker
+  rm -rf "${tmp_dir}"
+}
+
+install_lazygit() {
+  if command -v lazygit >/dev/null 2>&1; then
+    log "lazygit already installed"
+    return 0
+  fi
+
+  local arch archive_arch version latest_api tmp_dir
+  arch="$(dpkg --print-architecture)"
+
+  case "${arch}" in
+    amd64)
+      archive_arch="x86_64"
+      ;;
+    arm64)
+      archive_arch="arm64"
+      ;;
+    armhf)
+      archive_arch="armv6"
+      ;;
+    *)
+      log "Skipping lazygit install on unsupported architecture: ${arch}"
+      return 0
+      ;;
+  esac
+
+  latest_api="https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
+  version="$(curl -fsSL "${latest_api}" | sed -n 's/.*"tag_name":[[:space:]]*"v\([^"]*\)".*/\1/p' | head -n1)"
+  if [[ -z "${version}" ]]; then
+    echo "Unable to determine latest lazygit version." >&2
+    exit 1
+  fi
+
+  tmp_dir="$(mktemp -d)"
+
+  log "Installing lazygit ${version}"
+  curl -fsSL \
+    "https://github.com/jesseduffield/lazygit/releases/download/v${version}/lazygit_${version}_Linux_${archive_arch}.tar.gz" \
+    -o "${tmp_dir}/lazygit.tar.gz"
+  tar -xzf "${tmp_dir}/lazygit.tar.gz" -C "${tmp_dir}" lazygit
+  install -m 0755 "${tmp_dir}/lazygit" /usr/local/bin/lazygit
   rm -rf "${tmp_dir}"
 }
 
@@ -381,11 +430,9 @@ write_target_zshrc() {
   cat >"${zshrc_path}" <<EOF
 ${proxy_block}
 # Editor settings
-if command -v nano >/dev/null 2>&1; then
-  alias nano="\$(command -v nano)"
-  export VISUAL=nano
-  export EDITOR=nano
-fi
+alias nano="\$(command -v nano)"
+export VISUAL=nano
+export EDITOR=nano
 
 # User-local binaries (include uv/uvx).
 export PATH="\$HOME/.local/bin:\$PATH"
@@ -399,13 +446,8 @@ esac
 
 # fnm
 export FNM_PATH="\$HOME/.local/share/fnm"
-if [[ -d "\$FNM_PATH" ]]; then
-  export PATH="\$FNM_PATH:\$PATH"
-fi
-
-if command -v fnm >/dev/null 2>&1; then
-  eval "\$(fnm env --use-on-cd --shell zsh)"
-fi
+export PATH="\$FNM_PATH:\$PATH"
+eval "\$(fnm env --use-on-cd --shell zsh)"
 
 # oh-my-zsh
 export ZSH="\$HOME/.oh-my-zsh"
@@ -419,46 +461,39 @@ _newline_precmd() { print; }
 add-zsh-hook precmd _newline_precmd
 
 # uv / uvx completion.
-if command -v uv >/dev/null 2>&1; then
-  eval "\$(uv generate-shell-completion zsh)"
-fi
-if command -v uvx >/dev/null 2>&1; then
-  eval "\$(uvx --generate-shell-completion zsh)"
-fi
+eval "\$(uv generate-shell-completion zsh)"
+eval "\$(uvx --generate-shell-completion zsh)"
 
 # zoxide
-if command -v zoxide >/dev/null 2>&1; then
-  eval "\$(zoxide init zsh)"
-fi
+eval "\$(zoxide init zsh)"
 
 # eza
-if command -v eza >/dev/null 2>&1; then
-  alias ls="eza --icons"
-  alias ll="eza -l --icons"
-  alias la="eza -la --icons"
-  alias tree="eza --tree"
-fi
+alias ls="eza --icons"
+alias ll="eza -l --icons"
+alias la="eza -la --icons"
+alias tree="eza --tree"
 
-if command -v fdfind >/dev/null 2>&1; then
-  alias fd="fdfind"
-fi
+# fd
+alias fd="fdfind"
 
+# directory
 alias j="z"
 alias ji="zi"
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
+
+# utils
 alias c="clear"
 alias h="history"
 
-if [[ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
+# zsh-autosuggestions
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-if [[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
+# zsh-syntax-highlighting
+# Keep this near the end of .zshrc so it can observe final widgets/bindings.
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 EOF
 
   if [[ "${IS_ROOT_TARGET}" -eq 0 ]]; then
@@ -485,11 +520,11 @@ main() {
 
   log "Installing base packages"
   apt-get install -y btop ca-certificates curl eza fd-find fzf git jq nano ripgrep wget zoxide zsh unzip
-  apt_install_if_available zsh-autosuggestions
-  apt_install_if_available zsh-syntax-highlighting
+  apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
 
   install_docker
   install_lazydocker
+  install_lazygit
   install_uv
   install_fnm
   install_node_with_fnm
