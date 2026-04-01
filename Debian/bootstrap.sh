@@ -368,6 +368,50 @@ install_lazygit() {
   rm -rf "${tmp_dir}"
 }
 
+install_edit() {
+  local arch asset_suffix latest_api download_url tmp_dir
+
+  if command -v msedit >/dev/null 2>&1 || command -v edit >/dev/null 2>&1; then
+    log "Microsoft Edit already installed"
+    return 0
+  fi
+
+  arch="$(dpkg --print-architecture)"
+  case "${arch}" in
+    amd64)
+      asset_suffix="x86_64-linux-gnu.tar.zst"
+      ;;
+    arm64)
+      asset_suffix="aarch64-linux-gnu.tar.zst"
+      ;;
+    *)
+      log "Skipping Microsoft Edit install on unsupported architecture: ${arch}"
+      return 0
+      ;;
+  esac
+
+  latest_api="https://api.github.com/repos/microsoft/edit/releases/latest"
+  download_url="$(
+    curl -fsSL "${latest_api}" |
+      jq -r --arg suffix "${asset_suffix}" '.assets[] | select(.name | endswith($suffix)) | .browser_download_url' |
+      head -n1
+  )"
+
+  if [[ -z "${download_url}" || "${download_url}" == "null" ]]; then
+    echo "Unable to determine Microsoft Edit download URL for ${arch}." >&2
+    exit 1
+  fi
+
+  tmp_dir="$(mktemp -d)"
+
+  log "Installing Microsoft Edit from ${download_url##*/}"
+  curl -fsSL "${download_url}" -o "${tmp_dir}/edit.tar.zst"
+  tar --zstd -xf "${tmp_dir}/edit.tar.zst" -C "${tmp_dir}" edit
+  install -m 0755 "${tmp_dir}/edit" /usr/local/bin/msedit
+  ln -sf /usr/local/bin/msedit /usr/local/bin/edit
+  rm -rf "${tmp_dir}"
+}
+
 install_uv() {
   if run_as_target_user command -v uv >/dev/null 2>&1; then
     return 0
@@ -442,9 +486,8 @@ write_target_zshrc() {
 ${proxy_block}
 
 # Editor settings
-alias nano="\$(command -v nano)"
-export VISUAL=nano
-export EDITOR=nano
+export VISUAL=msedit
+export EDITOR=msedit
 
 # User-local binaries (include uv/uvx).
 export PATH="\$HOME/.local/bin:\$PATH"
@@ -531,12 +574,13 @@ main() {
   apt-get update
 
   log "Installing base packages"
-  apt-get install -y btop ca-certificates curl eza fd-find fzf git jq nano ripgrep wget zoxide zsh unzip
+  apt-get install -y btop ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
   apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
 
   install_docker
   install_lazydocker
   install_lazygit
+  install_edit
   install_uv
   install_fnm
   install_node_with_fnm
