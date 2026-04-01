@@ -479,13 +479,12 @@ install_user_scripts() {
 
 write_target_zshrc() {
   local zshrc_path="${TARGET_HOME}/.zshrc"
-  local proxy_block
-
-  proxy_block="$(zsh_proxy_block)"
-
-  cat >"${zshrc_path}" <<EOF
-${proxy_block}
-
+  {
+    zsh_proxy_block
+    if [[ "${WITH_XRAY}" -eq 1 || "${WITH_PROXY}" -eq 1 ]]; then
+      printf '\n'
+    fi
+    cat <<'EOF'
 # Editor settings
 export VISUAL=msedit
 export EDITOR=msedit
@@ -551,6 +550,7 @@ source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # Keep this near the end of .zshrc so it can observe final widgets/bindings.
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 EOF
+  } >"${zshrc_path}"
 
   if [[ "${IS_ROOT_TARGET}" -eq 0 ]]; then
     chown "${TARGET_USER}:${TARGET_USER}" "${zshrc_path}"

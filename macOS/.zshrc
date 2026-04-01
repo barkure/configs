@@ -2,10 +2,9 @@
 BREW_PREFIX="$(brew --prefix)"
 
 # Editor settings
-# Use Homebrew nano as the default editor.
-alias nano="$BREW_PREFIX/bin/nano"
-export VISUAL=nano
-export EDITOR=nano
+# Use Homebrew Edit as the default editor.
+export VISUAL=/opt/homebrew/bin/edit
+export EDITOR=/opt/homebrew/bin/edit
 
 # Network proxy
 # Proxy endpoints.

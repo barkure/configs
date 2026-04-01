@@ -32,9 +32,9 @@
 - 传入 `--with-proxy` 时，脚本只启用代理环境，不安装 Xray；默认使用 `socks5://127.0.0.1:10808` 和 `http://127.0.0.1:10809`
 - 安装基础工具：`btop`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`unzip`、`zsh`、`zstd`
 - 安装 `oh-my-zsh` 和 zsh 插件：`zsh-autosuggestions`、`zsh-syntax-highlighting`
-- 安装 `uv`、`fnm`、`Docker`、`LazyDocker`、`LazyGit`、`Microsoft Edit`
+- 安装 `uv`、`fnm`、`Docker`、`LazyDocker`、`LazyGit`
 - 使用 `fnm` 安装 Node.js 24，执行 `corepack enable` 启用 `pnpm`，并写入 `PNPM_HOME`
-- 将默认编辑器设置为 `msedit`
+- 安装 `Microsoft Edit`，将默认编辑器设置为 `msedit`，并链接到 `edit`
 
 运行方式：
 ```bash
