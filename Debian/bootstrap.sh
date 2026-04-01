@@ -371,8 +371,9 @@ install_lazygit() {
 install_edit() {
   local arch asset_suffix latest_api download_url tmp_dir
 
-  if command -v msedit >/dev/null 2>&1 || command -v edit >/dev/null 2>&1; then
+  if command -v msedit >/dev/null 2>&1; then
     log "Microsoft Edit already installed"
+    ln -sf "$(command -v msedit)" /usr/local/bin/edit
     return 0
   fi
 
