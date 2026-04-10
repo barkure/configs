@@ -499,7 +499,7 @@ case ":\$PATH:" in
   *) export PATH="\$PNPM_HOME:\$PATH" ;;
 esac
 
-# fnm
+# fnm: auto-switch Node version on directory change.
 export FNM_PATH="\$HOME/.local/share/fnm"
 export PATH="\$FNM_PATH:\$PATH"
 eval "\$(fnm env --use-on-cd --shell zsh)"
@@ -510,10 +510,6 @@ ZSH_THEME="candy"
 plugins=(git)
 
 source "\$ZSH/oh-my-zsh.sh"
-
-autoload -Uz add-zsh-hook
-_newline_precmd() { print; }
-add-zsh-hook precmd _newline_precmd
 
 # uv / uvx completion.
 eval "\$(uv generate-shell-completion zsh)"
@@ -528,12 +524,13 @@ alias ll="eza -l --icons"
 alias la="eza -la --icons"
 alias tree="eza --tree"
 
+# bat
+alias cat="batcat --paging=never"
+
 # fd
 alias fd="fdfind"
 
 # directory
-alias j="z"
-alias ji="zi"
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -575,7 +572,7 @@ main() {
   apt-get update
 
   log "Installing base packages"
-  apt-get install -y btop ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
+  apt-get install -y bat btop ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
   apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
 
   install_docker

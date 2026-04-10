@@ -22,13 +22,6 @@ export NO_PROXY="$no_proxy"
 # User-local binaries (include uv/uvx).
 export PATH="$HOME/.local/bin:$PATH"
 
-# pnpm global bin directory.
-export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
 # Android SDK platform-tools (adb).
 export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
@@ -36,7 +29,6 @@ export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="passion"
 plugins=(git)
-
 source "$ZSH/oh-my-zsh.sh"
 
 # uv / uvx completion.
@@ -45,6 +37,14 @@ eval "$(uvx --generate-shell-completion zsh)"
 
 # fnm: auto-switch Node version on directory change.
 eval "$(fnm env --use-on-cd --shell zsh)"
+
+# pnpm
+export PNPM_HOME="/Users/barkure/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
 
 # zoxide
 eval "$(zoxide init zsh)"
@@ -55,9 +55,8 @@ alias ll="eza -l --icons"
 alias la="eza -la --icons"
 alias tree="eza --tree"
 
-# zoxide
-alias j="z"
-alias ji="zi"
+# bat
+alias cat="bat --paging=never"
 
 # directory
 alias ..="cd .."
