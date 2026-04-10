@@ -56,7 +56,7 @@ alias la="eza -la --icons"
 alias tree="eza --tree"
 
 # bat
-alias cat="bat --paging=never"
+alias cat="bat --style=plain --paging=never"
 
 # directory
 alias ..="cd .."

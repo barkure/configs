@@ -525,7 +525,7 @@ alias la="eza -la --icons"
 alias tree="eza --tree"
 
 # bat
-alias cat="batcat --paging=never"
+alias cat="batcat --style=plain --paging=never"
 
 # fd
 alias fd="fdfind"
