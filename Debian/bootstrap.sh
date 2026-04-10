@@ -490,33 +490,33 @@ export VISUAL=msedit
 export EDITOR=msedit
 
 # User-local binaries (include uv/uvx).
-export PATH="\$HOME/.local/bin:\$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # pnpm global bin directory.
-export PNPM_HOME="\$HOME/.local/share/pnpm"
-case ":\$PATH:" in
-  *":\$PNPM_HOME:"*) ;;
-  *) export PATH="\$PNPM_HOME:\$PATH" ;;
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
 # fnm: auto-switch Node version on directory change.
-export FNM_PATH="\$HOME/.local/share/fnm"
-export PATH="\$FNM_PATH:\$PATH"
-eval "\$(fnm env --use-on-cd --shell zsh)"
+export FNM_PATH="$HOME/.local/share/fnm"
+export PATH="$FNM_PATH:$PATH"
+eval "$(fnm env --use-on-cd --shell zsh)"
 
 # oh-my-zsh
-export ZSH="\$HOME/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="candy"
 plugins=(git)
 
-source "\$ZSH/oh-my-zsh.sh"
+source "$ZSH/oh-my-zsh.sh"
 
 # uv / uvx completion.
-eval "\$(uv generate-shell-completion zsh)"
-eval "\$(uvx --generate-shell-completion zsh)"
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
 
 # zoxide
-eval "\$(zoxide init zsh)"
+eval "$(zoxide init zsh)"
 
 # eza
 alias ls="eza --icons"
