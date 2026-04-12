@@ -35,16 +35,8 @@ source "$ZSH/oh-my-zsh.sh"
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
 
-# fnm: auto-switch Node version on directory change.
-eval "$(fnm env --use-on-cd --shell zsh)"
-
-# pnpm
-export PNPM_HOME="/Users/barkure/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"
 
 # zoxide
 eval "$(zoxide init zsh)"
