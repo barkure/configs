@@ -426,26 +426,13 @@ install_uv() {
   fi
 }
 
-install_fnm() {
-  if run_as_target_user command -v fnm >/dev/null 2>&1; then
+install_viteplus() {
+  if [[ -f "${TARGET_HOME}/.vite-plus/env" ]]; then
     return 0
   fi
 
-  log "Installing fnm for ${TARGET_USER}"
-  run_as_target_user_for_network env SHELL=/usr/bin/zsh bash -c "$(curl -fsSL https://fnm.vercel.app/install)"
-}
-
-install_node_with_fnm() {
-  log "Installing Node.js 24 and enabling corepack for ${TARGET_USER}"
-  run_as_target_user_for_network env PATH="${TARGET_HOME}/.local/share/fnm:${TARGET_HOME}/.local/bin:${PATH}" \
-    bash -lc '
-      export FNM_PATH="$HOME/.local/share/fnm"
-      export PATH="$FNM_PATH:$PATH"
-      eval "$(fnm env --shell bash)"
-      fnm install 24
-      fnm default 24
-      corepack enable
-    '
+  log "Installing Vite+ for ${TARGET_USER}"
+  run_as_target_user_for_network bash -lc 'curl -fsSL https://vite.plus | bash'
 }
 
 install_oh_my_zsh() {
@@ -492,18 +479,6 @@ export EDITOR=msedit
 # User-local binaries (include uv/uvx).
 export PATH="$HOME/.local/bin:$PATH"
 
-# pnpm global bin directory.
-export PNPM_HOME="$HOME/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-# fnm: auto-switch Node version on directory change.
-export FNM_PATH="$HOME/.local/share/fnm"
-export PATH="$FNM_PATH:$PATH"
-eval "$(fnm env --use-on-cd --shell zsh)"
-
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="candy"
@@ -514,6 +489,9 @@ source "$ZSH/oh-my-zsh.sh"
 # uv / uvx completion.
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
+
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"
 
 # zoxide
 eval "$(zoxide init zsh)"
@@ -580,8 +558,7 @@ main() {
   install_lazygit
   install_edit
   install_uv
-  install_fnm
-  install_node_with_fnm
+  install_viteplus
   install_oh_my_zsh
   install_user_scripts
   write_target_zshrc
