@@ -60,6 +60,14 @@ function Update-InternetOptions {
     [void][WinInet]::InternetSetOption([IntPtr]::Zero, 37, [IntPtr]::Zero, 0)
 }
 
+function Stop-XrayProcesses {
+    $targets = @(Get-CimInstance Win32_Process -Filter "Name = 'xray.exe'")
+
+    $targets | ForEach-Object {
+        Stop-Process -Id $_.ProcessId -Force
+    }
+}
+
 if (-not (Test-Path -LiteralPath $configPath)) {
     throw "xray config not found: $configPath"
 }
@@ -81,15 +89,6 @@ Set-ItemProperty -Path $internetSettingsPath -Name ProxyServer -Value '127.0.0.1
 Set-ItemProperty -Path $internetSettingsPath -Name ProxyOverride -Value $proxyOverride
 Update-InternetOptions
 
-$normalizedConfig = [System.IO.Path]::GetFullPath($configPath).ToLowerInvariant()
-
-$existing = Get-CimInstance Win32_Process -Filter "Name = 'xray.exe'" | Where-Object {
-    $_.CommandLine -and
-    $_.CommandLine.ToLowerInvariant().Contains($normalizedConfig)
-}
-
-if ($existing) {
-    exit 0
-}
+Stop-XrayProcesses
 
 Start-Process -FilePath 'xray' -ArgumentList @('run', '--config', $configPath) -WindowStyle Hidden
