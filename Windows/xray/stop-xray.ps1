@@ -1,7 +1,43 @@
 $ErrorActionPreference = 'Stop'
 
-$userHome = [Environment]::GetFolderPath('UserProfile')
-$configPath = Join-Path $userHome '.config\xray\config.json'
+$scriptDirectory = $PSScriptRoot
+$configFiles = @(Get-ChildItem -LiteralPath $scriptDirectory -File -Filter '*.json' | Sort-Object Name)
+
+if (-not $configFiles) {
+    throw "no xray config files found in: $scriptDirectory"
+}
+
+function Select-ConfigPath {
+    param(
+        [System.IO.FileInfo[]]$Files
+    )
+
+    if ($Files.Count -eq 1) {
+        return $Files[0].FullName
+    }
+
+    Write-Host 'Select xray config:'
+
+    for ($index = 0; $index -lt $Files.Count; $index++) {
+        Write-Host ('[{0}] {1}' -f ($index + 1), $Files[$index].Name)
+    }
+
+    while ($true) {
+        $selection = (Read-Host 'Enter config number').Trim()
+
+        if ($selection -match '^\d+$') {
+            $selectedIndex = [int]$selection
+
+            if ($selectedIndex -ge 1 -and $selectedIndex -le $Files.Count) {
+                return $Files[$selectedIndex - 1].FullName
+            }
+        }
+
+        Write-Host 'Invalid selection. Try again.'
+    }
+}
+
+$configPath = Select-ConfigPath -Files $configFiles
 $userEnvironmentPath = 'HKCU:\Environment'
 $internetSettingsPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings'
 
