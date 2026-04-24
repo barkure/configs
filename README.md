@@ -29,7 +29,7 @@
 适合新装好的 Debian/Ubuntu 环境：
 
 - 传入 `--with-xray` 时，脚本会先完成 Xray 部署并启用本地代理，再通过该代理执行后续联网安装流程
-- 传入 `--with-proxy` 时，脚本只启用代理环境，不安装 Xray；默认使用 `socks5://127.0.0.1:10808` 和 `http://127.0.0.1:10809`
+- 传入 `--with-proxy` 时，脚本只启用代理环境，不安装 Xray；默认使用 `http://127.0.0.1:10809` 和 `socks5://127.0.0.1:10808`
 - 安装基础工具：`bat`、`btop`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`unzip`、`zsh`、`zstd`
 - 安装 `oh-my-zsh` 和 zsh 插件：`zsh-autosuggestions`、`zsh-syntax-highlighting`
 - 安装 `uv`、`viteplus`、`Docker`、`LazyDocker`、`LazyGit`
@@ -74,8 +74,23 @@ exec zsh
 
 ## Windows
 
-`Windows/xray/` 保存的是 Windows 下使用 Xray 的示例配置和启停脚本：
+`Windows/xray/` 保存的是 Windows 下使用 Xray 的示例配置和启停脚本，你可以把它们放到任意目录，例如 `/path/xray`：
+
+- `config.json.example`：Xray 配置示例，默认监听 `10808`(SOCKS) 和 `10809`(HTTP)
+- `start-xray.ps1`：从脚本所在目录读取 `*.json` 配置；如果有多个配置文件，会先让你选择，再启动 Xray
+- `stop-xray.ps1`：停止 Xray，并清理当前用户的代理设置
+
+使用方式：
 
 1. 安装 Xray：`winget install XTLS.Xray-core`
-2. 修改 `config.json.example`，置于 `$HOME\.config\xray\config.json`
-3. `start-xray.ps1` 和 `stop-xray.ps1` 可放在桌面，便于操作
+2. 复制 `config.json.example` 为一个或多个 `.json` 配置文件，并放在 `/path/xray` 目录下
+3. 运行 `start-xray.ps1`
+
+`start-xray.ps1` 会做这些事情：
+
+- 停掉已有的 `xray.exe` 进程
+- 将当前用户的 `HTTP_PROXY`、`HTTPS_PROXY`、`ALL_PROXY`、`NO_PROXY` 写入环境变量
+- 将 Windows 系统代理切换到 `127.0.0.1:10809`
+- 当目录中存在多个配置文件时，提示选择要启动的配置
+
+运行 `stop-xray.ps1` 时，会停止 `xray.exe`，并关闭系统代理、删除上述用户级代理环境变量。

@@ -7,17 +7,27 @@ export VISUAL=/opt/homebrew/bin/edit
 export EDITOR=/opt/homebrew/bin/edit
 
 # Network proxy
-# Proxy endpoints.
-export http_proxy="http://127.0.0.1:10809"
-export https_proxy="http://127.0.0.1:10809"
-export all_proxy="socks5://127.0.0.1:10808"
-export no_proxy="127.0.0.1,localhost,::1"
+export PROXY_URL="http://127.0.0.1:10809"
+export NO_PROXY_LIST="127.0.0.1,localhost,::1"
 
-# Uppercase variants for tools that expect them.
-export HTTP_PROXY="$http_proxy"
-export HTTPS_PROXY="$https_proxy"
-export ALL_PROXY="$all_proxy"
-export NO_PROXY="$no_proxy"
+proxy() {
+  export http_proxy="$PROXY_URL"
+  export https_proxy="$PROXY_URL"
+  export all_proxy="$PROXY_URL"
+  export no_proxy="$NO_PROXY_LIST"
+
+  export HTTP_PROXY="$http_proxy"
+  export HTTPS_PROXY="$https_proxy"
+  export ALL_PROXY="$all_proxy"
+  export NO_PROXY="$no_proxy"
+}
+
+unproxy() {
+  unset http_proxy https_proxy all_proxy no_proxy
+  unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY
+}
+
+proxy
 
 # User-local binaries (include uv/uvx).
 export PATH="$HOME/.local/bin:$PATH"

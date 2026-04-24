@@ -3,8 +3,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-XRAY_SOCKS_PROXY="socks5://127.0.0.1:10808"
 XRAY_HTTP_PROXY="http://127.0.0.1:10809"
+XRAY_SOCKS_PROXY="socks5://127.0.0.1:10808"
 XRAY_NO_PROXY="127.0.0.1,localhost,::1"
 
 WITH_XRAY=0
@@ -161,16 +161,28 @@ zsh_proxy_block() {
 
   cat <<'EOF'
 # Network proxy
-export http_proxy="http://127.0.0.1:10809"
-export https_proxy="http://127.0.0.1:10809"
-export all_proxy="socks5://127.0.0.1:10808"
-export no_proxy="127.0.0.1,localhost,::1"
+export PROXY_URL="http://127.0.0.1:10809"
+export ALL_PROXY_URL="socks5://127.0.0.1:10808"
+export NO_PROXY_LIST="127.0.0.1,localhost,::1"
 
-# Uppercase variants for tools that expect them.
-export HTTP_PROXY="$http_proxy"
-export HTTPS_PROXY="$https_proxy"
-export ALL_PROXY="$all_proxy"
-export NO_PROXY="$no_proxy"
+proxy() {
+  export http_proxy="$PROXY_URL"
+  export https_proxy="$PROXY_URL"
+  export all_proxy="$ALL_PROXY_URL"
+  export no_proxy="$NO_PROXY_LIST"
+
+  export HTTP_PROXY="$http_proxy"
+  export HTTPS_PROXY="$https_proxy"
+  export ALL_PROXY="$all_proxy"
+  export NO_PROXY="$no_proxy"
+}
+
+unproxy() {
+  unset http_proxy https_proxy all_proxy no_proxy
+  unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY
+}
+
+proxy
 
 EOF
 }
