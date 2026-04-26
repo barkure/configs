@@ -162,24 +162,27 @@ zsh_proxy_block() {
   cat <<'EOF'
 # Network proxy
 export PROXY_URL="http://127.0.0.1:10809"
-export ALL_PROXY_URL="socks5://127.0.0.1:10808"
 export NO_PROXY_LIST="127.0.0.1,localhost,::1"
 
 proxy() {
   export http_proxy="$PROXY_URL"
   export https_proxy="$PROXY_URL"
-  export all_proxy="$ALL_PROXY_URL"
+  export all_proxy="$PROXY_URL"
+  export ws_proxy="$PROXY_URL"
+  export wss_proxy="$PROXY_URL"
   export no_proxy="$NO_PROXY_LIST"
 
   export HTTP_PROXY="$http_proxy"
   export HTTPS_PROXY="$https_proxy"
   export ALL_PROXY="$all_proxy"
+  export WS_PROXY="$PROXY_URL"
+  export WSS_PROXY="$PROXY_URL"
   export NO_PROXY="$no_proxy"
 }
 
 unproxy() {
-  unset http_proxy https_proxy all_proxy no_proxy
-  unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY
+  unset http_proxy https_proxy all_proxy ws_proxy wss_proxy no_proxy
+  unset HTTP_PROXY HTTPS_PROXY ALL_PROXY WS_PROXY WSS_PROXY NO_PROXY
 }
 
 proxy
@@ -438,6 +441,15 @@ install_uv() {
   fi
 }
 
+install_pixi() {
+  if [[ -x "${TARGET_HOME}/.pixi/bin/pixi" ]]; then
+    return 0
+  fi
+
+  log "Installing pixi for ${TARGET_USER}"
+  run_as_target_user_for_network bash -lc 'curl -fsSL https://pixi.sh/install.sh | bash'
+}
+
 install_viteplus() {
   if [[ -f "${TARGET_HOME}/.vite-plus/env" ]]; then
     return 0
@@ -501,6 +513,9 @@ source "$ZSH/oh-my-zsh.sh"
 # uv / uvx completion.
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
+
+# pixi
+export PATH="$HOME/.pixi/bin:$PATH"
 
 # Vite+ bin (https://viteplus.dev)
 . "$HOME/.vite-plus/env"
@@ -570,6 +585,7 @@ main() {
   install_lazygit
   install_edit
   install_uv
+  install_pixi
   install_viteplus
   install_oh_my_zsh
   install_user_scripts

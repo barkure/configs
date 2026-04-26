@@ -14,17 +14,21 @@ proxy() {
   export http_proxy="$PROXY_URL"
   export https_proxy="$PROXY_URL"
   export all_proxy="$PROXY_URL"
+  export ws_proxy="$PROXY_URL"
+  export wss_proxy="$PROXY_URL"
   export no_proxy="$NO_PROXY_LIST"
 
   export HTTP_PROXY="$http_proxy"
   export HTTPS_PROXY="$https_proxy"
   export ALL_PROXY="$all_proxy"
+  export WS_PROXY="$PROXY_URL"
+  export WSS_PROXY="$PROXY_URL"
   export NO_PROXY="$no_proxy"
 }
 
 unproxy() {
-  unset http_proxy https_proxy all_proxy no_proxy
-  unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY
+  unset http_proxy https_proxy all_proxy ws_proxy wss_proxy no_proxy
+  unset HTTP_PROXY HTTPS_PROXY ALL_PROXY WS_PROXY WSS_PROXY NO_PROXY
 }
 
 proxy
@@ -47,6 +51,9 @@ eval "$(uvx --generate-shell-completion zsh)"
 
 # Vite+ bin (https://viteplus.dev)
 . "$HOME/.vite-plus/env"
+
+# Flutter
+export PATH="/Users/barkure/Developer/flutter/bin:$PATH"
 
 # zoxide
 eval "$(zoxide init zsh)"
