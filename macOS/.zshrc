@@ -52,9 +52,6 @@ eval "$(uvx --generate-shell-completion zsh)"
 # Vite+ bin (https://viteplus.dev)
 . "$HOME/.vite-plus/env"
 
-# Flutter
-export PATH="/Users/barkure/Developer/flutter/bin:$PATH"
-
 # zoxide
 eval "$(zoxide init zsh)"
 
