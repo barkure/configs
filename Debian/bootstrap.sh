@@ -385,6 +385,11 @@ install_viteplus() {
   run_as_target_user_for_network bash -lc 'curl -fsSL https://vite.plus | bash'
 }
 
+install_codex() {
+  log "Installing or updating @openai/codex for ${TARGET_USER}"
+  run_as_target_user_for_network bash -lc '. "$HOME/.vite-plus/env" && vp add -g @openai/codex'
+}
+
 install_oh_my_zsh() {
   if [[ -d "${TARGET_HOME}/.oh-my-zsh" ]]; then
     log "Updating oh-my-zsh for ${TARGET_USER}"
@@ -496,6 +501,7 @@ main() {
   install_uv
   install_pixi
   install_viteplus
+  install_codex
   install_oh_my_zsh
   write_target_zshrc
 

@@ -31,6 +31,7 @@
 - 安装基础工具：`bat`、`btop`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`unzip`、`zsh`、`zstd`
 - 安装 `oh-my-zsh` 和 zsh 插件：`zsh-autosuggestions`、`zsh-syntax-highlighting`
 - 安装 `uv`、`pixi`、`viteplus`、`Docker`、`LazyDocker`、`LazyGit`
+- 通过 `vp add -g @openai/codex` 安装或更新 Codex CLI
 - 写入与本机 `.zshrc` 风格接近的 shell 环境，并加载 `~/.pixi/bin` 和 `~/.vite-plus/env`
 - 安装 `Microsoft Edit`，将默认编辑器设置为 `msedit`，并链接到 `edit`
 
