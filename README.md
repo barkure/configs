@@ -1,14 +1,13 @@
 # configs
 
-我的个人配置仓库，主要用来保存 Debian/Ubuntu、macOS 和 Windows 上常用的环境初始化脚本、终端配置，以及 Xray 相关文件。
+我的个人配置仓库，主要用来保存 Debian/Ubuntu、macOS 和 Windows 上常用的环境初始化脚本、终端配置，以及 Windows 下的 Xray 相关文件。
 
 # 目录结构
 
 ```text
 .
 ├── Debian/
-│   ├── bootstrap.sh
-│   └── xray/
+│   └── bootstrap.sh
 ├── Windows/
 │   └── xray/
 └── macOS/
@@ -22,14 +21,13 @@
 `Debian/` 里主要是这些内容：
 
 - `bootstrap.sh`：统一的 Debian/Ubuntu 初始化脚本
-- `xray/`：Xray 二进制、service、示例配置和 geofiles，geofiles 来自 [Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat)
 
 ### bootstrap.sh
 
 适合新装好的 Debian/Ubuntu 环境：
 
-- 传入 `--with-xray` 时，脚本会先完成 Xray 部署并启用本地代理，再通过该代理执行后续联网安装流程
-- 传入 `--with-proxy` 时，脚本只启用代理环境，不安装 Xray；默认使用 `http://127.0.0.1:10809` 和 `socks5://127.0.0.1:10808`
+- 脚本可重复运行；每次运行都会重新拉取并安装可获取到的最新版本
+- 传入 `--with-proxy` 时，脚本会启用代理环境；默认使用 `http://127.0.0.1:10809` 和 `socks5://127.0.0.1:10808`
 - 安装基础工具：`bat`、`btop`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`unzip`、`zsh`、`zstd`
 - 安装 `oh-my-zsh` 和 zsh 插件：`zsh-autosuggestions`、`zsh-syntax-highlighting`
 - 安装 `uv`、`pixi`、`viteplus`、`Docker`、`LazyDocker`、`LazyGit`
@@ -40,13 +38,6 @@
 ```bash
 cd Debian
 sudo ./bootstrap.sh
-exec zsh
-```
-
-如需安装并启用 Xray 代理，请参照 `Debian/xray/config.json.example` 生成 `config.json`，并置于 `Debian/xray/` 目录下，然后运行：
-```bash
-cd Debian
-sudo ./bootstrap.sh --with-xray
 exec zsh
 ```
 
@@ -61,7 +52,6 @@ exec zsh
 
 - 从目标用户下用 `sudo` 执行时，脚本会根据 `SUDO_USER` 配置对应账号
 - 直接以 root 运行时，脚本会配置 root
-- 关于 Xray 的更多操作和信息，详见 [XTLS/Xray-install](https://github.com/XTLS/Xray-install/blob/main/README_zh-Hans.md)
 
 ## macOS
 
