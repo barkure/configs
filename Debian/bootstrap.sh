@@ -290,15 +290,16 @@ install_lazygit() {
 }
 
 install_edit() {
-  local arch asset_suffix latest_api download_url tmp_dir
+  local arch asset_arch latest_api asset_name download_url tmp_dir
+  local -a edit_asset_info
 
   arch="$(dpkg --print-architecture)"
   case "${arch}" in
     amd64)
-      asset_suffix="x86_64-linux-gnu.tar.zst"
+      asset_arch="x86_64"
       ;;
     arm64)
-      asset_suffix="aarch64-linux-gnu.tar.zst"
+      asset_arch="aarch64"
       ;;
     *)
       log "Skipping Microsoft Edit install on unsupported architecture: ${arch}"
@@ -307,22 +308,42 @@ install_edit() {
   esac
 
   latest_api="https://api.github.com/repos/microsoft/edit/releases/latest"
-  download_url="$(
+  mapfile -t edit_asset_info < <(
     curl -fsSL "${latest_api}" |
-      jq -r --arg suffix "${asset_suffix}" '.assets[] | select(.name | endswith($suffix)) | .browser_download_url' |
-      head -n1
-  )"
+      jq -r --arg arch "${asset_arch}" '
+        .assets[]
+        | select(.name | test("-" + $arch + "-linux-gnu\\.tar\\.(gz|zst)$"))
+        | .name, .browser_download_url
+      ' |
+      head -n2
+  )
 
-  if [[ -z "${download_url}" || "${download_url}" == "null" ]]; then
+  asset_name="${edit_asset_info[0]:-}"
+  download_url="${edit_asset_info[1]:-}"
+
+  if [[ -z "${asset_name}" || -z "${download_url}" || "${download_url}" == "null" ]]; then
     echo "Unable to determine Microsoft Edit download URL for ${arch}." >&2
     exit 1
   fi
 
   tmp_dir="$(mktemp -d)"
 
-  log "Installing latest Microsoft Edit from ${download_url##*/}"
-  curl -fsSL "${download_url}" -o "${tmp_dir}/edit.tar.zst"
-  tar --zstd -xf "${tmp_dir}/edit.tar.zst" -C "${tmp_dir}" edit
+  log "Installing latest Microsoft Edit from ${asset_name}"
+  curl -fsSL "${download_url}" -o "${tmp_dir}/${asset_name}"
+
+  case "${asset_name}" in
+    *.tar.gz)
+      tar -xzf "${tmp_dir}/${asset_name}" -C "${tmp_dir}" edit
+      ;;
+    *.tar.zst)
+      tar --zstd -xf "${tmp_dir}/${asset_name}" -C "${tmp_dir}" edit
+      ;;
+    *)
+      echo "Unsupported Microsoft Edit archive format: ${asset_name}" >&2
+      exit 1
+      ;;
+  esac
+
   install -m 0755 "${tmp_dir}/edit" /usr/local/bin/msedit
   ln -sf /usr/local/bin/msedit /usr/local/bin/edit
   rm -rf "${tmp_dir}"
