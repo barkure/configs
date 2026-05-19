@@ -1,6 +1,6 @@
 # configs
 
-个人配置仓库，主要保存 Debian/Ubuntu 和 macOS 上常用的环境初始化脚本、Shell 配置，以及一份 Xray 示例配置。
+个人配置仓库，主要保存 Debian/Ubuntu 和 macOS 上常用的环境初始化脚本、Shell 配置。
 
 ## 目录结构
 
@@ -66,60 +66,6 @@ sudo ./bootstrap.sh --with-proxy
 exec zsh
 ```
 
-### Xray 示例配置
-
-`Debian/config.json.example` 是一份 Xray 的示例客户端配置，适合配合上面的代理地址一起使用。
-
-默认监听端口：
-
-- SOCKS: `127.0.0.1:10808`
-- HTTP: `127.0.0.1:10809`
-
-使用前需要按实际服务端信息替换这些字段：
-
-- `address`
-- `id`
-- `serverName`
-- `publicKey`
-- `shortId`
-
 ## macOS
 
 `macOS/` 保存的是我在 macOS 上使用的终端和 shell 配置。
-
-### `.zshrc`
-
-主要内容：
-
-- 默认编辑器设置为 Homebrew 安装的 `edit`
-- 默认启用本地代理环境
-- 加载 `oh-my-zsh`，主题为 `passion`
-- 初始化 `uv` / `uvx` 补全、`zoxide`、`Vite+`
-- 提供 `eza`、`bat`、目录跳转等常用别名
-- 加载 `zsh-autosuggestions` 和 `zsh-syntax-highlighting`
-
-### `ghostty/`
-
-- `ghostty/config`：Ghostty 主配置
-- `ghostty/themes/passion`：自用主题
-
-当前配置里包括：
-
-- 字体：`Maple Mono NF CN`
-- 字号：`14`
-- 半透明背景
-- 自定义窗口内边距
-
-### `zsh-theme/passion.zsh-theme`
-
-自定义 zsh 主题，包含：
-
-- 时间、目录、Git 状态提示
-- 上条命令耗时输出
-- 登录时的额外提示信息
-
-在 macOS 下，这个主题依赖 `gdate`，通常可通过下面的命令安装：
-
-```bash
-brew install coreutils
-```
