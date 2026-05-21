@@ -29,6 +29,7 @@
 - 可重复执行，已有组件会尽量更新到最新可获取版本
 - 如果通过 `sudo` 运行，会优先配置 `SUDO_USER` 对应用户；否则配置 `root`
 - `--with-proxy` 会为脚本执行过程和生成的 zsh 环境启用代理
+- `--with-docker` 才会安装 Docker 和 LazyDocker
 
 默认代理地址：
 
@@ -40,7 +41,8 @@
 
 - 基础工具：`bat`、`btop`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`unzip`、`zsh`、`zstd`
 - zsh 生态：`oh-my-zsh`、`zsh-autosuggestions`、`zsh-syntax-highlighting`
-- 开发工具：`uv`、`pixi`、`Docker`、`LazyDocker`、`LazyGit`
+- 开发工具：`uv`、`pixi`、`LazyGit`
+- 可选开发工具：`Docker`、`LazyDocker`（仅在传入 `--with-docker` 时安装）
 - 其他工具：`Microsoft Edit`
 - 全局安装 Codex CLI：`vp add -g @openai/codex`
 
@@ -65,6 +67,11 @@ cd Debian
 sudo ./bootstrap.sh --with-proxy
 exec zsh
 ```
+
+参数说明：
+
+- `--with-proxy`：为脚本执行过程和生成的 zsh 环境启用代理
+- `--with-docker`：安装 Docker 和 LazyDocker
 
 ## macOS
 

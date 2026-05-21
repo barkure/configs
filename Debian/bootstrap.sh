@@ -7,6 +7,7 @@ XRAY_SOCKS_PROXY="socks5://127.0.0.1:10808"
 XRAY_NO_PROXY="127.0.0.1,localhost,::1"
 
 WITH_PROXY=0
+WITH_DOCKER=0
 TARGET_USER=""
 TARGET_HOME=""
 IS_ROOT_TARGET=0
@@ -18,11 +19,12 @@ log() {
 usage() {
   cat <<'EOF'
 Usage:
-  sudo ./bootstrap.sh [--with-proxy]
+  sudo ./bootstrap.sh [--with-proxy] [--with-docker]
 
 Options:
-  --with-proxy  Enable proxy environment only, without installing Xray.
-  -h, --help    Show this help message.
+  --with-proxy   Enable proxy environment only, without installing Xray.
+  --with-docker  Install Docker and LazyDocker.
+  -h, --help     Show this help message.
 EOF
 }
 
@@ -31,6 +33,9 @@ parse_args() {
     case "$1" in
       --with-proxy)
         WITH_PROXY=1
+        ;;
+      --with-docker)
+        WITH_DOCKER=1
         ;;
       -h|--help)
         usage
@@ -494,8 +499,10 @@ main() {
   apt-get install -y bat btop ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
   apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
 
-  install_docker
-  install_lazydocker
+  if [[ "${WITH_DOCKER}" -eq 1 ]]; then
+    install_docker
+    install_lazydocker
+  fi
   install_lazygit
   install_edit
   install_uv
@@ -514,7 +521,9 @@ main() {
   else
     log "User shell setup complete"
     printf '\nNext steps:\n'
-    printf '  newgrp docker   # optional, if you want Docker group changes immediately\n'
+    if [[ "${WITH_DOCKER}" -eq 1 ]]; then
+      printf '  newgrp docker   # optional, if you want Docker group changes immediately\n'
+    fi
   fi
   printf '  exec zsh\n'
 }
