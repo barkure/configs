@@ -11,9 +11,44 @@ WITH_DOCKER=0
 TARGET_USER=""
 TARGET_HOME=""
 IS_ROOT_TARGET=0
+FAILED_STEPS=()
 
 log() {
   printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
+
+record_failure() {
+  FAILED_STEPS+=("$1")
+}
+
+run_step() {
+  local step_name="$1"
+  shift
+
+  log "Starting: ${step_name}"
+  if "$@"; then
+    log "Completed: ${step_name}"
+    return 0
+  fi
+
+  log "Failed: ${step_name}"
+  record_failure "${step_name}"
+  return 0
+}
+
+report_failures() {
+  local failed_step
+
+  if [[ "${#FAILED_STEPS[@]}" -eq 0 ]]; then
+    return 0
+  fi
+
+  printf '\nThe following steps failed:\n' >&2
+  for failed_step in "${FAILED_STEPS[@]}"; do
+    printf '  - %s\n' "${failed_step}" >&2
+  done
+
+  return 1
 }
 
 usage() {
@@ -173,6 +208,11 @@ configure_proxy_if_requested() {
 }
 
 install_docker() {
+  if command -v docker >/dev/null 2>&1; then
+    log "Using existing Docker"
+    return 0
+  fi
+
   if [[ ! -f /etc/os-release ]]; then
     log "Skipping Docker install: /etc/os-release not found"
     return 0
@@ -188,7 +228,7 @@ install_docker() {
       ;;
   esac
 
-  log "Installing or upgrading Docker"
+  log "Installing Docker"
   apt-get install -y ca-certificates curl
   install -d -m 0755 /etc/apt/keyrings
   curl -fsSL "https://download.docker.com/linux/${ID}/gpg" -o /etc/apt/keyrings/docker.asc
@@ -220,6 +260,12 @@ EOF
 
 install_lazydocker() {
   local arch archive_arch version latest_api tmp_dir
+
+  if command -v lazydocker >/dev/null 2>&1; then
+    log "Using existing lazydocker"
+    return 0
+  fi
+
   arch="$(dpkg --print-architecture)"
 
   case "${arch}" in
@@ -258,6 +304,12 @@ install_lazydocker() {
 
 install_lazygit() {
   local arch archive_arch version latest_api tmp_dir
+
+  if command -v lazygit >/dev/null 2>&1; then
+    log "Using existing lazygit"
+    return 0
+  fi
+
   arch="$(dpkg --print-architecture)"
 
   case "${arch}" in
@@ -297,6 +349,11 @@ install_lazygit() {
 install_edit() {
   local arch asset_arch latest_api asset_name download_url tmp_dir
   local -a edit_asset_info
+
+  if command -v edit >/dev/null 2>&1 || command -v msedit >/dev/null 2>&1; then
+    log "Using existing Microsoft Edit"
+    return 0
+  fi
 
   arch="$(dpkg --print-architecture)"
   case "${arch}" in
@@ -355,9 +412,11 @@ install_edit() {
 }
 
 install_uv() {
+  local uv_path=""
+
   if run_as_target_user command -v uv >/dev/null 2>&1; then
-    log "Updating uv for ${TARGET_USER}"
-    run_as_target_user_for_network uv self update
+    uv_path="$(run_as_target_user sh -lc 'command -v uv')"
+    log "Using existing uv for ${TARGET_USER}: ${uv_path}"
     return 0
   fi
 
@@ -371,8 +430,7 @@ install_uv() {
 
 install_pixi() {
   if [[ -x "${TARGET_HOME}/.pixi/bin/pixi" ]]; then
-    log "Updating pixi for ${TARGET_USER}"
-    run_as_target_user_for_network "${TARGET_HOME}/.pixi/bin/pixi" self-update
+    log "Using existing pixi for ${TARGET_USER}: ${TARGET_HOME}/.pixi/bin/pixi"
     return 0
   fi
 
@@ -382,23 +440,27 @@ install_pixi() {
 
 install_viteplus() {
   if [[ -f "${TARGET_HOME}/.vite-plus/env" ]]; then
-    log "Updating Vite+ for ${TARGET_USER}"
-  else
-    log "Installing Vite+ for ${TARGET_USER}"
+    log "Using existing Vite+ for ${TARGET_USER}"
+    return 0
   fi
 
+  log "Installing Vite+ for ${TARGET_USER}"
   run_as_target_user_for_network bash -lc 'curl -fsSL https://vite.plus | bash'
 }
 
 install_codex() {
-  log "Installing or updating @openai/codex for ${TARGET_USER}"
+  if run_as_target_user bash -lc 'command -v codex >/dev/null 2>&1'; then
+    log "Using existing @openai/codex for ${TARGET_USER}"
+    return 0
+  fi
+
+  log "Installing @openai/codex for ${TARGET_USER}"
   run_as_target_user_for_network bash -lc '. "$HOME/.vite-plus/env" && vp add -g @openai/codex'
 }
 
 install_oh_my_zsh() {
   if [[ -d "${TARGET_HOME}/.oh-my-zsh" ]]; then
-    log "Updating oh-my-zsh for ${TARGET_USER}"
-    run_as_target_user_for_network git -C "${TARGET_HOME}/.oh-my-zsh" pull --ff-only
+    log "Using existing oh-my-zsh for ${TARGET_USER}"
     return 0
   fi
 
@@ -492,28 +554,25 @@ main() {
 
   configure_proxy_if_requested
 
-  log "Updating apt cache"
-  apt-get update
+  run_step "Update apt cache" apt-get update
 
-  log "Installing base packages"
-  apt-get install -y bat btop ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
-  apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
+  run_step "Install base packages" apt-get install -y bat btop ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
+  run_step "Install zsh plugins" apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
 
   if [[ "${WITH_DOCKER}" -eq 1 ]]; then
-    install_docker
-    install_lazydocker
+    run_step "Install Docker" install_docker
+    run_step "Install LazyDocker" install_lazydocker
   fi
-  install_lazygit
-  install_edit
-  install_uv
-  install_pixi
-  install_viteplus
-  install_codex
-  install_oh_my_zsh
-  write_target_zshrc
+  run_step "Install LazyGit" install_lazygit
+  run_step "Install Microsoft Edit" install_edit
+  run_step "Install uv" install_uv
+  run_step "Install pixi" install_pixi
+  run_step "Install Vite+" install_viteplus
+  run_step "Install Codex" install_codex
+  run_step "Install oh-my-zsh" install_oh_my_zsh
+  run_step "Write .zshrc" write_target_zshrc
 
-  log "Setting ${TARGET_USER} shell to zsh"
-  chsh -s /usr/bin/zsh "${TARGET_USER}"
+  run_step "Set ${TARGET_USER} shell to zsh" chsh -s /usr/bin/zsh "${TARGET_USER}"
 
   if [[ "${IS_ROOT_TARGET}" -eq 1 ]]; then
     log "Root shell setup complete"
@@ -526,6 +585,8 @@ main() {
     fi
   fi
   printf '  exec zsh\n'
+
+  report_failures
 }
 
 main "$@"
