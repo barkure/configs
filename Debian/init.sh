@@ -8,6 +8,7 @@ XRAY_NO_PROXY="127.0.0.1,localhost,::1"
 
 WITH_PROXY=0
 WITH_DOCKER=0
+WITH_USTC_MIRROR=0
 TARGET_USER=""
 TARGET_HOME=""
 IS_ROOT_TARGET=0
@@ -54,23 +55,27 @@ report_failures() {
 usage() {
   cat <<'EOF'
 Usage:
-  sudo ./bootstrap.sh [--with-proxy] [--with-docker]
+  sudo ./init.sh [--proxy] [--docker] [--ustc]
 
 Options:
-  --with-proxy   Enable proxy environment only, without installing Xray.
-  --with-docker  Install Docker and LazyDocker.
-  -h, --help     Show this help message.
+  --proxy   Enable proxy environment only, without installing Xray.
+  --docker  Install Docker and LazyDocker.
+  --ustc    Switch Debian/Ubuntu apt sources to USTC mirror.
+  -h, --help  Show this help message.
 EOF
 }
 
 parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --with-proxy)
+      --proxy)
         WITH_PROXY=1
         ;;
-      --with-docker)
+      --docker)
         WITH_DOCKER=1
+        ;;
+      --ustc)
+        WITH_USTC_MIRROR=1
         ;;
       -h|--help)
         usage
@@ -205,6 +210,90 @@ configure_proxy_if_requested() {
 
   log "Enabling proxy environment"
   export_proxy_env
+}
+
+backup_apt_source_file() {
+  local path="$1"
+  local backup_path="${path}.bak"
+
+  if [[ ! -f "${path}" ]]; then
+    return 0
+  fi
+
+  if [[ -f "${backup_path}" ]]; then
+    rm -f "${path}"
+  else
+    mv "${path}" "${backup_path}"
+  fi
+}
+
+remove_apt_source_file() {
+  local path="$1"
+
+  if [[ -f "${path}" ]]; then
+    rm -f "${path}"
+  fi
+}
+
+configure_ustc_mirror_if_requested() {
+  local distro codename
+
+  if [[ "${WITH_USTC_MIRROR}" -ne 1 ]]; then
+    return 0
+  fi
+
+  if [[ ! -f /etc/os-release ]]; then
+    echo "Unable to configure USTC mirror: /etc/os-release not found." >&2
+    exit 1
+  fi
+
+  . /etc/os-release
+  distro="${ID:-}"
+  codename="${VERSION_CODENAME:-${UBUNTU_CODENAME:-}}"
+
+  if [[ -z "${codename}" ]]; then
+    echo "Unable to configure USTC mirror: distribution codename not found." >&2
+    exit 1
+  fi
+
+  case "${distro}" in
+    debian)
+      log "Configuring Debian apt sources to use USTC mirror (DEB822)"
+      backup_apt_source_file /etc/apt/sources.list
+      backup_apt_source_file /etc/apt/sources.list.d/debian.sources
+      remove_apt_source_file /etc/apt/sources.list
+      cat >/etc/apt/sources.list.d/debian.sources <<EOF
+Types: deb
+URIs: https://mirrors.ustc.edu.cn/debian
+Suites: ${codename} ${codename}-updates
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: https://mirrors.ustc.edu.cn/debian-security
+Suites: ${codename}-security
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+      ;;
+    ubuntu)
+      log "Configuring Ubuntu apt sources to use USTC mirror (DEB822)"
+      backup_apt_source_file /etc/apt/sources.list
+      backup_apt_source_file /etc/apt/sources.list.d/ubuntu.sources
+      remove_apt_source_file /etc/apt/sources.list
+      cat >/etc/apt/sources.list.d/ubuntu.sources <<EOF
+Types: deb
+URIs: https://mirrors.ustc.edu.cn/ubuntu
+Suites: ${codename} ${codename}-updates ${codename}-backports ${codename}-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+EOF
+      ;;
+    *)
+      echo "USTC mirror is only supported on Debian/Ubuntu. Current distro: ${distro:-unknown}." >&2
+      exit 1
+      ;;
+  esac
 }
 
 install_docker() {
@@ -553,6 +642,7 @@ main() {
   export DEBIAN_FRONTEND=noninteractive
 
   configure_proxy_if_requested
+  run_step "Configure USTC apt mirror" configure_ustc_mirror_if_requested
 
   run_step "Update apt cache" apt-get update
 
