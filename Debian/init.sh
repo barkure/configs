@@ -527,24 +527,24 @@ install_pixi() {
   run_as_target_user_for_network bash -lc 'curl -fsSL https://pixi.sh/install.sh | bash'
 }
 
-install_viteplus() {
-  if [[ -f "${TARGET_HOME}/.vite-plus/env" ]]; then
-    log "Using existing Vite+ for ${TARGET_USER}"
+install_bun() {
+  if [[ -x "${TARGET_HOME}/.bun/bin/bun" ]]; then
+    log "Using existing Bun for ${TARGET_USER}: ${TARGET_HOME}/.bun/bin/bun"
     return 0
   fi
 
-  log "Installing Vite+ for ${TARGET_USER}"
-  run_as_target_user_for_network bash -lc 'curl -fsSL https://vite.plus | bash'
+  log "Installing Bun for ${TARGET_USER}"
+  run_as_target_user_for_network bash -lc 'curl -fsSL https://bun.com/install | bash'
 }
 
 install_codex() {
-  if run_as_target_user bash -lc 'command -v codex >/dev/null 2>&1'; then
+  if run_as_target_user bash -lc 'export PATH="$HOME/.bun/bin:$PATH" && command -v codex >/dev/null 2>&1'; then
     log "Using existing @openai/codex for ${TARGET_USER}"
     return 0
   fi
 
   log "Installing @openai/codex for ${TARGET_USER}"
-  run_as_target_user_for_network bash -lc '. "$HOME/.vite-plus/env" && vp add -g @openai/codex'
+  run_as_target_user_for_network bash -lc 'export PATH="$HOME/.bun/bin:$PATH" && bun add -g @openai/codex'
 }
 
 install_oh_my_zsh() {
@@ -587,8 +587,9 @@ eval "$(uvx --generate-shell-completion zsh)"
 # pixi
 export PATH="$HOME/.pixi/bin:$PATH"
 
-# Vite+ bin (https://viteplus.dev)
-. "$HOME/.vite-plus/env"
+# Bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
 # zoxide
 eval "$(zoxide init zsh)"
@@ -657,7 +658,7 @@ main() {
   run_step "Install Microsoft Edit" install_edit
   run_step "Install uv" install_uv
   run_step "Install pixi" install_pixi
-  run_step "Install Vite+" install_viteplus
+  run_step "Install Bun" install_bun
   run_step "Install Codex" install_codex
   run_step "Install oh-my-zsh" install_oh_my_zsh
   run_step "Write .zshrc" write_target_zshrc

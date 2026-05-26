@@ -33,7 +33,7 @@
   - SOCKS5: `socks5://127.0.0.1:10808`
   - NO_PROXY: `127.0.0.1,localhost,::1`
 
-- 安装清单：`bat`、`btop`、`bubblewrap`、`ca-certificates`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`zsh`、`unzip`、`zstd`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`oh-my-zsh`、`uv`、`pixi`、`Vite+`、`LazyGit`、`Microsoft Edit`、`@openai/codex`
+- 安装清单：`bat`、`btop`、`bubblewrap`、`ca-certificates`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`zsh`、`unzip`、`zstd`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`oh-my-zsh`、`uv`、`pixi`、`bun`、`LazyGit`、`Microsoft Edit`、`@openai/codex`
 
 脚本也会写入目标用户的 `~/.zshrc`，包含代理函数、常用 PATH、补全和别名。
 
