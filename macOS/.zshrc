@@ -41,16 +41,13 @@ export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="passion"
+ZSH_THEME="ys"
 plugins=(git)
 source "$ZSH/oh-my-zsh.sh"
 
 # uv / uvx completion.
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
-
-# Vite+ bin (https://viteplus.dev)
-. "$HOME/.vite-plus/env"
 
 # zoxide
 eval "$(zoxide init zsh)"
@@ -73,6 +70,18 @@ alias .....="cd ../../../.."
 # utils
 alias c="clear"
 alias h="history"
+
+# bucketctl
+alias bkt="bucketctl"
+
+# yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
 
 # zsh-autosuggestions
 source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
