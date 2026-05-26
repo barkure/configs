@@ -1,41 +1,80 @@
 # configs
 
-个人配置仓库，主要保存 Debian/Ubuntu 和 macOS 上常用的环境初始化脚本、Shell 配置。
+个人环境配置仓库，主要包含两部分：
+
+- `Debian/`：Debian / Ubuntu 新机器初始化脚本
+- `macOS/`：macOS 下使用的 `zsh` 和 Ghostty 配置
 
 ## 目录结构
 
 ```text
 .
 ├── Debian/
-│   ├── init.sh
-│   └── config.json.example
+│   ├── config.json.example
+│   └── init.sh
 └── macOS/
     ├── .zshrc
-    ├── ghostty/
-    │   ├── config
-    │   └── themes/
-    │       └── passion
-    └── zsh-theme/
-        └── passion.zsh-theme
+    └── ghostty/
+        └── config
 ```
 
 ## Debian
 
-`Debian/init.sh` 用于初始化一台新的 Debian/Ubuntu 机器。
+`Debian/init.sh` 用于初始化一台新的 Debian / Ubuntu 机器。
 
-- 支持 Ubuntu 24.04+ and Debian 13+.
-- 需要以 `root` 或 `sudo` 运行，`sudo` 运行时优先配置 `SUDO_USER`，否则配置 `root`
-- 已有软件直接跳过，单个步骤失败后继续执行，最后汇总失败项
-- `--docker` 会安装 `Docker` 和 `LazyDocker`
-- `--ustc` 会将 Debian/Ubuntu 的 `apt` 源切换到中科大源
-- `--proxy` 会为脚本执行过程和生成的 zsh 配置启用代理：
-  - HTTP: `http://127.0.0.1:10809`
-  - SOCKS5: `socks5://127.0.0.1:10808`
-  - NO_PROXY: `127.0.0.1,localhost,::1`
+特点：
 
-- 安装清单：`bat`、`btop`、`bubblewrap`、`ca-certificates`、`curl`、`eza`、`fd-find`、`fzf`、`git`、`jq`、`ripgrep`、`wget`、`zoxide`、`zsh`、`unzip`、`zstd`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`oh-my-zsh`、`uv`、`pixi`、`bun`、`LazyGit`、`Microsoft Edit`、`@openai/codex`
+- 支持 `Ubuntu 24.04+` 和 `Debian 13+`
+- 需要以 `root` 或 `sudo` 运行
+- 如果通过 `sudo` 运行，优先配置 `SUDO_USER`；否则配置 `root`
+- 已安装的软件会自动跳过
+- 单个步骤失败后会继续执行，最后统一汇总失败项
+- 可选安装 `Docker` 和 `LazyDocker`
+- 可选切换 `apt` 源到中科大镜像
+- 可选为脚本执行过程和生成的 `~/.zshrc` 启用代理
 
-脚本也会写入目标用户的 `~/.zshrc`，包含代理函数、常用 PATH、补全和别名。
+代理参数：
+
+- HTTP / HTTPS: `http://127.0.0.1:10809`
+- SOCKS5: `socks5://127.0.0.1:10808`
+- `NO_PROXY`: `127.0.0.1,localhost,::1`
+
+脚本会安装一组常用工具，包括：
+
+- `bat`
+- `btop`
+- `bubblewrap`
+- `ca-certificates`
+- `curl`
+- `eza`
+- `fd-find`
+- `fzf`
+- `git`
+- `jq`
+- `ripgrep`
+- `wget`
+- `zoxide`
+- `zsh`
+- `unzip`
+- `zstd`
+- `zsh-autosuggestions`
+- `zsh-syntax-highlighting`
+- `oh-my-zsh`
+- `uv`
+- `pixi`
+- `bun`
+- `LazyGit`
+- `Microsoft Edit`
+- `@openai/codex`
+
+脚本还会写入目标用户的 `~/.zshrc`，包含：
+
+- 代理函数 `proxy` / `unproxy`
+- 常用 `PATH`
+- `oh-my-zsh`
+- `uv` / `uvx` 补全
+- `zoxide`
+- 常用别名
 
 使用方式：
 
@@ -44,14 +83,40 @@ cd Debian
 sudo ./init.sh [OPTIONS]
 exec zsh
 ```
-可选：
+
+可选参数：
 
 ```bash
---proxy, -p   Enable proxy
---docker, -d  Install Docker and LazyDocker
---ustc, -u    Use USTC apt mirror
+--proxy   Enable proxy environment only, without installing Xray
+--docker  Install Docker and LazyDocker
+--ustc    Switch Debian/Ubuntu apt sources to USTC mirror
+-h, --help  Show help message
 ```
 
 ## macOS
 
-`macOS/` 保存的是我在 macOS 上使用的终端和 shell 配置。
+`macOS/` 目录保存我在 macOS 上使用的终端与 Shell 配置。
+
+### `macOS/.zshrc`
+
+当前配置包含：
+
+- 使用 Homebrew 安装的 `edit` 作为默认编辑器
+- 默认启用本地代理
+- 增加用户本地二进制目录和 Android SDK `platform-tools`
+- 启用 `oh-my-zsh`
+- 启用 `uv` / `uvx` 补全
+- 启用 `zoxide`
+- 提供 `eza`、`bat`、目录跳转等常用别名
+- 集成 `yazi` 的目录切换函数
+- 启用 `zsh-autosuggestions` 和 `zsh-syntax-highlighting`
+
+### `macOS/ghostty/config`
+
+当前 Ghostty 配置包含：
+
+- 字体：`Maple Mono NF CN`
+- 主题：`Carbonfox`
+- 半透明背景
+- 自定义窗口内边距
+- 启用部分 shell integration
