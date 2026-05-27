@@ -49,6 +49,9 @@ source "$ZSH/oh-my-zsh.sh"
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
 
+# bun
+export PATH="/Users/barkure/.bun/bin:$PATH"
+
 # zoxide
 eval "$(zoxide init zsh)"
 
