@@ -106,6 +106,7 @@ exec zsh
 - 增加用户本地二进制目录和 Android SDK `platform-tools`
 - 启用 `oh-my-zsh`
 - 启用 `uv` / `uvx` 补全
+- 增加 `bun` 的 PATH
 - 启用 `zoxide`
 - 提供 `eza`、`bat`、目录跳转等常用别名
 - 集成 `yazi` 的目录切换函数
@@ -116,7 +117,8 @@ exec zsh
 当前 Ghostty 配置包含：
 
 - 字体：`Maple Mono NF CN`
-- 主题：`Carbonfox`
+- 主题：`Vercel`
 - 半透明背景
 - 自定义窗口内边距
 - 启用部分 shell integration
+- `macOS-option-as-alt` 键绑定
