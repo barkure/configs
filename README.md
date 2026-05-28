@@ -1,21 +1,23 @@
 # configs
 
-个人环境配置仓库，主要包含两部分：
+个人环境配置仓库，主要包含三部分：
 
 - `Debian/`：Debian / Ubuntu 新机器初始化脚本
 - `macOS/`：macOS 下使用的 `zsh` 和 Ghostty 配置
+- `Xray/`：Xray 客户端配置示例
 
 ## 目录结构
 
 ```text
 .
 ├── Debian/
-│   ├── config.json.example
 │   └── init.sh
-└── macOS/
-    ├── .zshrc
-    └── ghostty/
-        └── config
+├── macOS/
+│   ├── .zshrc
+│   └── ghostty/
+│       └── config
+└── Xray/
+    └── config.json.example
 ```
 
 ## Debian
