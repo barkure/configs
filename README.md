@@ -65,7 +65,6 @@
 - `bun`
 - `LazyGit`
 - `Microsoft Edit`
-- `@openai/codex`
 
 脚本还会写入目标用户的 `~/.zshrc`，包含：
 

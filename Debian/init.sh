@@ -537,16 +537,6 @@ install_bun() {
   run_as_target_user_for_network bash -lc 'curl -fsSL https://bun.com/install | bash'
 }
 
-install_codex() {
-  if run_as_target_user bash -lc 'export PATH="$HOME/.bun/bin:$PATH" && command -v codex >/dev/null 2>&1'; then
-    log "Using existing @openai/codex for ${TARGET_USER}"
-    return 0
-  fi
-
-  log "Installing @openai/codex for ${TARGET_USER}"
-  run_as_target_user_for_network bash -lc 'export PATH="$HOME/.bun/bin:$PATH" && bun add -g @openai/codex'
-}
-
 install_oh_my_zsh() {
   if [[ -d "${TARGET_HOME}/.oh-my-zsh" ]]; then
     log "Using existing oh-my-zsh for ${TARGET_USER}"
@@ -659,7 +649,6 @@ main() {
   run_step "Install uv" install_uv
   run_step "Install pixi" install_pixi
   run_step "Install Bun" install_bun
-  run_step "Install Codex" install_codex
   run_step "Install oh-my-zsh" install_oh_my_zsh
   run_step "Write .zshrc" write_target_zshrc
 
