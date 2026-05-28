@@ -108,7 +108,6 @@ exec zsh
 - 增加 `bun` 的 PATH
 - 启用 `zoxide`
 - 提供 `eza`、`bat`、目录跳转等常用别名
-- 集成 `yazi` 的目录切换函数
 - 启用 `zsh-autosuggestions` 和 `zsh-syntax-highlighting`
 
 ### `macOS/ghostty/config`
