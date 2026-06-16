@@ -31,7 +31,7 @@
 - 如果通过 `sudo` 运行，优先配置 `SUDO_USER`；否则配置 `root`
 - 已安装的软件会自动跳过
 - 单个步骤失败后会继续执行，最后统一汇总失败项
-- 可选安装 `Docker` 和 `LazyDocker`
+- 可选安装 `Docker`
 - 可选切换 `apt` 源到中科大镜像
 - 可选为脚本执行过程和生成的 `~/.zshrc` 启用代理
 
@@ -65,7 +65,6 @@
 - `uv`
 - `pixi`
 - `bun`
-- `LazyGit`
 - `Microsoft Edit`
 
 脚本还会写入目标用户的 `~/.zshrc`，包含：
@@ -89,7 +88,7 @@ exec zsh
 
 ```bash
 --proxy   Enable proxy environment only, without installing Xray
---docker  Install Docker and LazyDocker
+--docker  Install Docker
 --ustc    Switch Debian/Ubuntu apt sources to USTC mirror
 -h, --help  Show help message
 ```

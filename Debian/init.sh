@@ -59,7 +59,7 @@ Usage:
 
 Options:
   --proxy   Enable proxy environment only, without installing Xray.
-  --docker  Install Docker and LazyDocker.
+  --docker  Install Docker.
   --ustc    Switch Debian/Ubuntu apt sources to USTC mirror.
   -h, --help  Show this help message.
 EOF
@@ -347,94 +347,6 @@ EOF
   fi
 }
 
-install_lazydocker() {
-  local arch archive_arch version latest_api tmp_dir
-
-  if command -v lazydocker >/dev/null 2>&1; then
-    log "Using existing lazydocker"
-    return 0
-  fi
-
-  arch="$(dpkg --print-architecture)"
-
-  case "${arch}" in
-    amd64)
-      archive_arch="x86_64"
-      ;;
-    arm64)
-      archive_arch="arm64"
-      ;;
-    armhf)
-      archive_arch="armv7"
-      ;;
-    *)
-      log "Skipping lazydocker install on unsupported architecture: ${arch}"
-      return 0
-      ;;
-  esac
-
-  latest_api="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
-  version="$(curl -fsSL "${latest_api}" | sed -n 's/.*"tag_name":[[:space:]]*"v\([^"]*\)".*/\1/p' | head -n1)"
-  if [[ -z "${version}" ]]; then
-    echo "Unable to determine latest lazydocker version." >&2
-    exit 1
-  fi
-
-  tmp_dir="$(mktemp -d)"
-
-  log "Installing latest lazydocker ${version}"
-  curl -fsSL \
-    "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_Linux_${archive_arch}.tar.gz" \
-    -o "${tmp_dir}/lazydocker.tar.gz"
-  tar -xzf "${tmp_dir}/lazydocker.tar.gz" -C "${tmp_dir}" lazydocker
-  install -m 0755 "${tmp_dir}/lazydocker" /usr/local/bin/lazydocker
-  rm -rf "${tmp_dir}"
-}
-
-install_lazygit() {
-  local arch archive_arch version latest_api tmp_dir
-
-  if command -v lazygit >/dev/null 2>&1; then
-    log "Using existing lazygit"
-    return 0
-  fi
-
-  arch="$(dpkg --print-architecture)"
-
-  case "${arch}" in
-    amd64)
-      archive_arch="x86_64"
-      ;;
-    arm64)
-      archive_arch="arm64"
-      ;;
-    armhf)
-      archive_arch="armv6"
-      ;;
-    *)
-      log "Skipping lazygit install on unsupported architecture: ${arch}"
-      return 0
-      ;;
-  esac
-
-  latest_api="https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
-  version="$(curl -fsSL "${latest_api}" | sed -n 's/.*"tag_name":[[:space:]]*"v\([^"]*\)".*/\1/p' | head -n1)"
-  if [[ -z "${version}" ]]; then
-    echo "Unable to determine latest lazygit version." >&2
-    exit 1
-  fi
-
-  tmp_dir="$(mktemp -d)"
-
-  log "Installing latest lazygit ${version}"
-  curl -fsSL \
-    "https://github.com/jesseduffield/lazygit/releases/download/v${version}/lazygit_${version}_Linux_${archive_arch}.tar.gz" \
-    -o "${tmp_dir}/lazygit.tar.gz"
-  tar -xzf "${tmp_dir}/lazygit.tar.gz" -C "${tmp_dir}" lazygit
-  install -m 0755 "${tmp_dir}/lazygit" /usr/local/bin/lazygit
-  rm -rf "${tmp_dir}"
-}
-
 install_edit() {
   local arch asset_arch latest_api asset_name download_url tmp_dir
   local -a edit_asset_info
@@ -642,9 +554,7 @@ main() {
 
   if [[ "${WITH_DOCKER}" -eq 1 ]]; then
     run_step "Install Docker" install_docker
-    run_step "Install LazyDocker" install_lazydocker
   fi
-  run_step "Install LazyGit" install_lazygit
   run_step "Install Microsoft Edit" install_edit
   run_step "Install uv" install_uv
   run_step "Install pixi" install_pixi
