@@ -497,9 +497,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 eval "$(zoxide init zsh)"
 
 # eza
-alias ls="eza --icons"
-alias ll="eza -l --icons"
-alias la="eza -la --icons"
+alias ls="eza"
+alias ll="eza -l"
+alias la="eza -la"
 alias tree="eza --tree"
 
 # bat
