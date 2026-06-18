@@ -53,6 +53,7 @@
 - `fzf`
 - `git`
 - `jq`
+- `mosh`
 - `ripgrep`
 - `wget`
 - `zoxide`

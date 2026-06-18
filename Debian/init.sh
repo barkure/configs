@@ -549,7 +549,7 @@ main() {
 
   run_step "Update apt cache" apt-get update
 
-  run_step "Install base packages" apt-get install -y bat btop bubblewrap ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
+  run_step "Install base packages" apt-get install -y bat btop bubblewrap ca-certificates curl eza fd-find fzf git jq mosh ripgrep wget zoxide zsh unzip zstd
   run_step "Install zsh plugins" apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
 
   if [[ "${WITH_DOCKER}" -eq 1 ]]; then
