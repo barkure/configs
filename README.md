@@ -74,14 +74,16 @@
     <td><code>pixi</code></td>
     <td><code>bun</code></td>
   </tr>
+  <tr>
+    <td><code>bubblewrap</code></td>
+    <td><code>oh-my-zsh</code></td>
+    <td><code>Microsoft Edit</code></td>
+  </tr>
 </table>
 
-- `bubblewrap`
 - `ca-certificates`
 - `zsh-autosuggestions`
 - `zsh-syntax-highlighting`
-- `oh-my-zsh`
-- `Microsoft Edit`
 
 脚本还会写入目标用户的 `~/.zshrc`，包含：
 
