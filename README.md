@@ -79,11 +79,16 @@
     <td><code>uv</code></td>
     <td><code>msedit</code></td>
   </tr>
+  <tr>
+    <td colspan="3"><code>ca-certificates</code></td>
+  </tr>
+  <tr>
+    <td colspan="3"><code>zsh-autosuggestions</code></td>
+  </tr>
+  <tr>
+    <td colspan="3"><code>zsh-syntax-highlighting</code></td>
+  </tr>
 </table>
-
-- `ca-certificates`
-- `zsh-autosuggestions`
-- `zsh-syntax-highlighting`
 
 脚本还会写入目标用户的 `~/.zshrc`，包含：
 
