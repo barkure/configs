@@ -70,14 +70,14 @@
     <td><code>zstd</code></td>
   </tr>
   <tr>
-    <td><code>uv</code></td>
+    <td><code>oh-my-zsh</code></td>
     <td><code>pixi</code></td>
     <td><code>bun</code></td>
   </tr>
   <tr>
     <td><code>bubblewrap</code></td>
-    <td><code>oh-my-zsh</code></td>
-    <td><code>Microsoft Edit</code></td>
+    <td><code>uv</code></td>
+    <td><code>msedit</code></td>
   </tr>
 </table>
 
