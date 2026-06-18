@@ -43,14 +43,38 @@
 
 脚本会安装一组常用工具，包括：
 
-| | | |
-| --- | --- | --- |
-| `bat` | `btop` | `curl` |
-| `eza` | `fd-find` | `fzf` |
-| `git` | `jq` | `mosh` |
-| `ripgrep` | `wget` | `zoxide` |
-| `zsh` | `unzip` | `zstd` |
-| `uv` | `pixi` | `bun` |
+<table>
+  <tr>
+    <td><code>bat</code></td>
+    <td><code>btop</code></td>
+    <td><code>curl</code></td>
+  </tr>
+  <tr>
+    <td><code>eza</code></td>
+    <td><code>fd-find</code></td>
+    <td><code>fzf</code></td>
+  </tr>
+  <tr>
+    <td><code>git</code></td>
+    <td><code>jq</code></td>
+    <td><code>mosh</code></td>
+  </tr>
+  <tr>
+    <td><code>ripgrep</code></td>
+    <td><code>wget</code></td>
+    <td><code>zoxide</code></td>
+  </tr>
+  <tr>
+    <td><code>zsh</code></td>
+    <td><code>unzip</code></td>
+    <td><code>zstd</code></td>
+  </tr>
+  <tr>
+    <td><code>uv</code></td>
+    <td><code>pixi</code></td>
+    <td><code>bun</code></td>
+  </tr>
+</table>
 
 - `bubblewrap`
 - `ca-certificates`
