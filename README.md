@@ -37,35 +37,26 @@
 
 代理参数：
 
-- HTTP / HTTPS: `http://127.0.0.1:10809`
+- HTTP(S): `http://127.0.0.1:10809`
 - SOCKS5: `socks5://127.0.0.1:10808`
-- `NO_PROXY`: `127.0.0.1,localhost,::1`
+- NO_PROXY: `127.0.0.1,localhost,::1`
 
 脚本会安装一组常用工具，包括：
 
-- `bat`
-- `btop`
+| | | |
+| --- | --- | --- |
+| `bat` | `btop` | `curl` |
+| `eza` | `fd-find` | `fzf` |
+| `git` | `jq` | `mosh` |
+| `ripgrep` | `wget` | `zoxide` |
+| `zsh` | `unzip` | `zstd` |
+| `uv` | `pixi` | `bun` |
+
 - `bubblewrap`
 - `ca-certificates`
-- `curl`
-- `eza`
-- `fd-find`
-- `fzf`
-- `git`
-- `jq`
-- `mosh`
-- `ripgrep`
-- `wget`
-- `zoxide`
-- `zsh`
-- `unzip`
-- `zstd`
 - `zsh-autosuggestions`
 - `zsh-syntax-highlighting`
 - `oh-my-zsh`
-- `uv`
-- `pixi`
-- `bun`
 - `Microsoft Edit`
 
 脚本还会写入目标用户的 `~/.zshrc`，包含：
