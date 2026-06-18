@@ -1,8 +1,8 @@
 # Homebrew
-BREW_PREFIX="$(brew --prefix)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+BREW_PREFIX="$HOMEBREW_PREFIX"
 
 # Editor settings
-# Use Homebrew Edit as the default editor.
 export VISUAL=/opt/homebrew/bin/edit
 export EDITOR=/opt/homebrew/bin/edit
 
@@ -33,11 +33,8 @@ unproxy() {
 
 proxy
 
-# User-local binaries (include uv/uvx).
-export PATH="$HOME/.local/bin:$PATH"
-
-# Android SDK platform-tools (adb).
-export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
+# User-local binaries.
+export PATH="$PATH:$HOME/.local/bin"
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
@@ -52,13 +49,16 @@ eval "$(uvx --generate-shell-completion zsh)"
 # bun
 export PATH="/Users/barkure/.bun/bin:$PATH"
 
+# go
+export PATH=$PATH:$(go env GOPATH)/bin
+
 # zoxide
 eval "$(zoxide init zsh)"
 
 # eza
-alias ls="eza --icons"
-alias ll="eza -l --icons"
-alias la="eza -la --icons"
+alias ls="eza"
+alias ll="eza -l"
+alias la="eza -la"
 alias tree="eza --tree"
 
 # bat

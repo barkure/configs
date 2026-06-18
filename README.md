@@ -103,7 +103,7 @@ exec zsh
 
 - 使用 Homebrew 安装的 `edit` 作为默认编辑器
 - 默认启用本地代理
-- 增加用户本地二进制目录和 Android SDK `platform-tools`
+- 增加用户本地二进制目录和 Go 用户二进制目录
 - 启用 `oh-my-zsh`
 - 启用 `uv` / `uvx` 补全
 - 增加 `bun` 的 PATH
