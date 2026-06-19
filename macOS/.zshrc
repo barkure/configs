@@ -1,4 +1,7 @@
 # Homebrew
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 BREW_PREFIX="$HOMEBREW_PREFIX"
 
@@ -51,6 +54,7 @@ export PATH="/Users/barkure/.bun/bin:$PATH"
 
 # go
 export PATH=$PATH:$(go env GOPATH)/bin
+export GOPROXY=https://mirrors.cloud.tencent.com/go,direct
 
 # zoxide
 eval "$(zoxide init zsh)"
