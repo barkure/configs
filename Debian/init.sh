@@ -5,10 +5,13 @@ set -euo pipefail
 XRAY_HTTP_PROXY="http://127.0.0.1:10809"
 XRAY_SOCKS_PROXY="socks5://127.0.0.1:10808"
 XRAY_NO_PROXY="127.0.0.1,localhost,::1"
+PYPI_USTC_MIRROR="https://mirrors.ustc.edu.cn/pypi/simple"
+CONDA_FORGE_USTC_MIRROR="https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge"
+NPM_TENCENT_MIRROR="https://mirrors.cloud.tencent.com/npm/"
 
 WITH_PROXY=0
 WITH_DOCKER=0
-WITH_USTC_MIRROR=0
+WITH_MIRROR=0
 TARGET_USER=""
 TARGET_HOME=""
 IS_ROOT_TARGET=0
@@ -55,12 +58,12 @@ report_failures() {
 usage() {
   cat <<'EOF'
 Usage:
-  sudo ./init.sh [--proxy] [--docker] [--ustc]
+  sudo ./init.sh [--proxy] [--docker] [--mirror]
 
 Options:
   --proxy   Enable proxy environment only, without installing Xray.
   --docker  Install Docker.
-  --ustc    Switch Debian/Ubuntu apt sources to USTC mirror.
+  --mirror  Configure package manager mirrors.
   -h, --help  Show this help message.
 EOF
 }
@@ -74,8 +77,8 @@ parse_args() {
       --docker)
         WITH_DOCKER=1
         ;;
-      --ustc)
-        WITH_USTC_MIRROR=1
+      --mirror)
+        WITH_MIRROR=1
         ;;
       -h|--help)
         usage
@@ -235,15 +238,15 @@ remove_apt_source_file() {
   fi
 }
 
-configure_ustc_mirror_if_requested() {
+configure_apt_mirror_if_requested() {
   local distro codename
 
-  if [[ "${WITH_USTC_MIRROR}" -ne 1 ]]; then
+  if [[ "${WITH_MIRROR}" -ne 1 ]]; then
     return 0
   fi
 
   if [[ ! -f /etc/os-release ]]; then
-    echo "Unable to configure USTC mirror: /etc/os-release not found." >&2
+    echo "Unable to configure apt mirror: /etc/os-release not found." >&2
     exit 1
   fi
 
@@ -252,7 +255,7 @@ configure_ustc_mirror_if_requested() {
   codename="${VERSION_CODENAME:-${UBUNTU_CODENAME:-}}"
 
   if [[ -z "${codename}" ]]; then
-    echo "Unable to configure USTC mirror: distribution codename not found." >&2
+    echo "Unable to configure apt mirror: distribution codename not found." >&2
     exit 1
   fi
 
@@ -290,10 +293,51 @@ Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 EOF
       ;;
     *)
-      echo "USTC mirror is only supported on Debian/Ubuntu. Current distro: ${distro:-unknown}." >&2
+      echo "Apt mirror is only supported on Debian/Ubuntu. Current distro: ${distro:-unknown}." >&2
       exit 1
       ;;
   esac
+}
+
+configure_tool_mirrors_if_requested() {
+  if [[ "${WITH_MIRROR}" -ne 1 ]]; then
+    return 0
+  fi
+
+  log "Configuring uv, pixi, and Bun mirrors for ${TARGET_USER}"
+
+  install -d -m 0755 "${TARGET_HOME}/.config/uv" "${TARGET_HOME}/.config/pixi"
+
+  cat >"${TARGET_HOME}/.config/uv/uv.toml" <<EOF
+[[index]]
+url = "${PYPI_USTC_MIRROR}"
+default = true
+EOF
+
+  cat >"${TARGET_HOME}/.config/pixi/config.toml" <<EOF
+[pypi-config]
+index-url = "${PYPI_USTC_MIRROR}"
+
+[mirrors]
+"https://conda.anaconda.org/conda-forge" = [
+  "${CONDA_FORGE_USTC_MIRROR}",
+]
+"https://pypi.org/simple" = [
+  "${PYPI_USTC_MIRROR}",
+]
+EOF
+
+  cat >"${TARGET_HOME}/.bunfig.toml" <<EOF
+[install]
+registry = "${NPM_TENCENT_MIRROR}"
+EOF
+
+  if [[ "${IS_ROOT_TARGET}" -eq 0 ]]; then
+    chown -R "${TARGET_USER}:${TARGET_USER}" \
+      "${TARGET_HOME}/.config/uv" \
+      "${TARGET_HOME}/.config/pixi"
+    chown "${TARGET_USER}:${TARGET_USER}" "${TARGET_HOME}/.bunfig.toml"
+  fi
 }
 
 install_docker() {
@@ -442,11 +486,24 @@ install_pixi() {
 install_bun() {
   if [[ -x "${TARGET_HOME}/.bun/bin/bun" ]]; then
     log "Using existing Bun for ${TARGET_USER}: ${TARGET_HOME}/.bun/bin/bun"
-    return 0
+  else
+    log "Installing Bun for ${TARGET_USER}"
+    run_as_target_user_for_network bash -lc 'curl -fsSL https://bun.com/install | bash'
   fi
 
-  log "Installing Bun for ${TARGET_USER}"
-  run_as_target_user_for_network bash -lc 'curl -fsSL https://bun.com/install | bash'
+  log "Linking Bun as node for ${TARGET_USER}"
+  run_as_target_user bash -lc '
+    mkdir -p "$HOME/.local/bin"
+    bun_path="$(command -v bun || true)"
+    if [[ -z "${bun_path}" && -x "$HOME/.bun/bin/bun" ]]; then
+      bun_path="$HOME/.bun/bin/bun"
+    fi
+    if [[ -z "${bun_path}" ]]; then
+      echo "Unable to locate bun for node symlink." >&2
+      exit 1
+    fi
+    ln -sfn "${bun_path}" "$HOME/.local/bin/node"
+  '
 }
 
 install_oh_my_zsh() {
@@ -545,7 +602,7 @@ main() {
   export DEBIAN_FRONTEND=noninteractive
 
   configure_proxy_if_requested
-  run_step "Configure USTC apt mirror" configure_ustc_mirror_if_requested
+  run_step "Configure apt mirror" configure_apt_mirror_if_requested
 
   run_step "Update apt cache" apt-get update
 
@@ -559,6 +616,7 @@ main() {
   run_step "Install uv" install_uv
   run_step "Install pixi" install_pixi
   run_step "Install Bun" install_bun
+  run_step "Configure tool mirrors" configure_tool_mirrors_if_requested
   run_step "Install oh-my-zsh" install_oh_my_zsh
   run_step "Write .zshrc" write_target_zshrc
 
