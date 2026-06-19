@@ -442,11 +442,24 @@ install_pixi() {
 install_bun() {
   if [[ -x "${TARGET_HOME}/.bun/bin/bun" ]]; then
     log "Using existing Bun for ${TARGET_USER}: ${TARGET_HOME}/.bun/bin/bun"
-    return 0
+  else
+    log "Installing Bun for ${TARGET_USER}"
+    run_as_target_user_for_network bash -lc 'curl -fsSL https://bun.com/install | bash'
   fi
 
-  log "Installing Bun for ${TARGET_USER}"
-  run_as_target_user_for_network bash -lc 'curl -fsSL https://bun.com/install | bash'
+  log "Linking Bun as node for ${TARGET_USER}"
+  run_as_target_user bash -lc '
+    mkdir -p "$HOME/.local/bin"
+    bun_path="$(command -v bun || true)"
+    if [[ -z "${bun_path}" && -x "$HOME/.bun/bin/bun" ]]; then
+      bun_path="$HOME/.bun/bin/bun"
+    fi
+    if [[ -z "${bun_path}" ]]; then
+      echo "Unable to locate bun for node symlink." >&2
+      exit 1
+    fi
+    ln -sfn "${bun_path}" "$HOME/.local/bin/node"
+  '
 }
 
 install_oh_my_zsh() {
