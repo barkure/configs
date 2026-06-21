@@ -73,12 +73,12 @@
   <tr>
     <td><code>pixi</code></td>
     <td><code>bun</code></td>
-    <td><code>ca-certificates</code></td>
+    <td><code>msedit</code></td>
   </tr>
   <tr>
     <td><code>bubblewrap</code></td>
     <td><code>uv</code></td>
-    <td><code>msedit</code></td>
+    <td><code>ca-certificates</code></td>
   </tr>
 </table>
 
