@@ -517,6 +517,30 @@ install_oh_my_zsh() {
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
+install_oh_my_zsh_plugin() {
+  local name="$1"
+  local repo="$2"
+  local plugin_dir="${TARGET_HOME}/.oh-my-zsh/custom/plugins/${name}"
+
+  if [[ -d "${plugin_dir}" ]]; then
+    log "Using existing ${name} for ${TARGET_USER}"
+    return 0
+  fi
+
+  log "Installing ${name} for ${TARGET_USER}"
+  run_as_target_user mkdir -p "${TARGET_HOME}/.oh-my-zsh/custom/plugins"
+  run_as_target_user_for_network git clone --depth 1 "${repo}" "${plugin_dir}"
+}
+
+install_zsh_plugins() {
+  install_oh_my_zsh_plugin \
+    zsh-autosuggestions \
+    https://github.com/zsh-users/zsh-autosuggestions.git
+  install_oh_my_zsh_plugin \
+    zsh-syntax-highlighting \
+    https://github.com/zsh-users/zsh-syntax-highlighting.git
+}
+
 write_target_zshrc() {
   local zshrc_path="${TARGET_HOME}/.zshrc"
   {
@@ -535,7 +559,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="candy"
-plugins=(git)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 
 source "$ZSH/oh-my-zsh.sh"
 
@@ -574,13 +598,6 @@ alias .....="cd ../../../.."
 # utils
 alias c="clear"
 alias h="history"
-
-# zsh-autosuggestions
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# zsh-syntax-highlighting
-# Keep this near the end of .zshrc so it can observe final widgets/bindings.
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 EOF
   } >"${zshrc_path}"
 
@@ -607,7 +624,6 @@ main() {
   run_step "Update apt cache" apt-get update
 
   run_step "Install base packages" apt-get install -y bat btop bubblewrap ca-certificates curl eza fd-find fzf git jq ripgrep wget zoxide zsh unzip zstd
-  run_step "Install zsh plugins" apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
 
   if [[ "${WITH_DOCKER}" -eq 1 ]]; then
     run_step "Install Docker" install_docker
@@ -618,6 +634,7 @@ main() {
   run_step "Install Bun" install_bun
   run_step "Configure tool mirrors" configure_tool_mirrors_if_requested
   run_step "Install oh-my-zsh" install_oh_my_zsh
+  run_step "Install zsh plugins" install_zsh_plugins
   run_step "Write .zshrc" write_target_zshrc
 
   run_step "Set ${TARGET_USER} shell to zsh" chsh -s /usr/bin/zsh "${TARGET_USER}"

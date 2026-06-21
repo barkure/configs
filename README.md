@@ -90,11 +90,14 @@
   </tr>
 </table>
 
+其中 `zsh-autosuggestions` 和 `zsh-syntax-highlighting` 会通过 `git clone` 安装到 `~/.oh-my-zsh/custom/plugins/`。
+
 脚本还会写入目标用户的 `~/.zshrc`，包含：
 
 - 代理函数 `proxy` / `unproxy`
 - 常用 `PATH`
 - `oh-my-zsh`
+- `zsh-autosuggestions` 和 `zsh-syntax-highlighting`
 - `uv` / `uvx` 补全
 - `zoxide`
 - 常用别名
