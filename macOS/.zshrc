@@ -42,7 +42,7 @@ export PATH="$PATH:$HOME/.local/bin"
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="ys"
-plugins=(git)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 source "$ZSH/oh-my-zsh.sh"
 
 # uv / uvx completion.
@@ -80,10 +80,3 @@ alias h="history"
 
 # bucketctl
 alias bkt="bucketctl"
-
-# zsh-autosuggestions
-source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-# zsh-syntax-highlighting
-# Keep this near the end of .zshrc so it can observe final widgets/bindings.
-source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
