@@ -73,24 +73,14 @@
   <tr>
     <td><code>pixi</code></td>
     <td><code>bun</code></td>
+    <td><code>ca-certificates</code></td>
   </tr>
   <tr>
     <td><code>bubblewrap</code></td>
     <td><code>uv</code></td>
     <td><code>msedit</code></td>
   </tr>
-  <tr>
-    <td colspan="3"><code>ca-certificates</code></td>
-  </tr>
-  <tr>
-    <td colspan="3"><code>zsh-autosuggestions</code></td>
-  </tr>
-  <tr>
-    <td colspan="3"><code>zsh-syntax-highlighting</code></td>
-  </tr>
 </table>
-
-其中 `zsh-autosuggestions` 和 `zsh-syntax-highlighting` 会通过 `git clone` 安装到 `~/.oh-my-zsh/custom/plugins/`。
 
 脚本还会写入目标用户的 `~/.zshrc`，包含：
 
