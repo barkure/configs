@@ -58,20 +58,19 @@
   <tr>
     <td><code>git</code></td>
     <td><code>jq</code></td>
-    <td><code>mosh</code></td>
+    <td><code>ripgrep</code></td>
   </tr>
   <tr>
-    <td><code>ripgrep</code></td>
     <td><code>wget</code></td>
     <td><code>zoxide</code></td>
+    <td><code>zsh</code></td>
   </tr>
   <tr>
-    <td><code>zsh</code></td>
     <td><code>unzip</code></td>
     <td><code>zstd</code></td>
+    <td><code>oh-my-zsh</code></td>
   </tr>
   <tr>
-    <td><code>oh-my-zsh</code></td>
     <td><code>pixi</code></td>
     <td><code>bun</code></td>
   </tr>
