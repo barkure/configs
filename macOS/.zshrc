@@ -3,7 +3,6 @@ export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
 export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
 eval "$(/opt/homebrew/bin/brew shellenv)"
-BREW_PREFIX="$HOMEBREW_PREFIX"
 
 # Editor settings
 export VISUAL=/opt/homebrew/bin/edit
