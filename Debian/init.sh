@@ -178,22 +178,23 @@ zsh_proxy_block() {
 
   cat <<'EOF'
 # Network proxy
-export PROXY_URL="http://127.0.0.1:10809"
+export PROXY_HTTP_URL="http://127.0.0.1:10809"
+export PROXY_SOCKS_URL="socks5://127.0.0.1:10808"
 export NO_PROXY_LIST="127.0.0.1,localhost,::1"
 
 proxy() {
-  export http_proxy="$PROXY_URL"
-  export https_proxy="$PROXY_URL"
-  export all_proxy="$PROXY_URL"
-  export ws_proxy="$PROXY_URL"
-  export wss_proxy="$PROXY_URL"
+  export http_proxy="$PROXY_SOCKS_URL"
+  export https_proxy="$PROXY_SOCKS_URL"
+  export all_proxy="$PROXY_SOCKS_URL"
+  export ws_proxy="$PROXY_SOCKS_URL"
+  export wss_proxy="$PROXY_SOCKS_URL"
   export no_proxy="$NO_PROXY_LIST"
 
-  export HTTP_PROXY="$http_proxy"
-  export HTTPS_PROXY="$https_proxy"
+  export HTTP_PROXY="$PROXY_HTTP_URL"
+  export HTTPS_PROXY="$PROXY_HTTP_URL"
   export ALL_PROXY="$all_proxy"
-  export WS_PROXY="$PROXY_URL"
-  export WSS_PROXY="$PROXY_URL"
+  export WS_PROXY="$ws_proxy"
+  export WSS_PROXY="$wss_proxy"
   export NO_PROXY="$no_proxy"
 }
 
