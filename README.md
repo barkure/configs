@@ -32,7 +32,7 @@
 - 已安装的软件会自动跳过
 - 单个步骤失败后会继续执行，最后统一汇总失败项
 - 可选安装 `Docker`
-- 可选配置镜像源：`apt` / `uv` / `pixi` 使用中科大镜像，`bun` 使用腾讯云 npm 镜像
+- 可选配置镜像源：`apt` / `uv` / `pixi` 使用中科大镜像
 - 可选为脚本执行过程和生成的 `~/.zshrc` 启用代理
 - 安装 `bun` 后会创建 `~/.local/bin/node` 指向 `bun`
 
@@ -105,7 +105,7 @@ exec zsh
 ```bash
 --proxy   Enable proxy environment only, without installing Xray
 --docker  Install Docker
---mirror  Configure package manager mirrors
+--mirror  Configure apt, uv, and pixi mirrors
 -h, --help  Show help message
 ```
 

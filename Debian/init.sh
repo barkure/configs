@@ -7,7 +7,6 @@ XRAY_SOCKS_PROXY="socks5://127.0.0.1:10808"
 XRAY_NO_PROXY="127.0.0.1,localhost,::1"
 PYPI_USTC_MIRROR="https://mirrors.ustc.edu.cn/pypi/simple"
 CONDA_FORGE_USTC_MIRROR="https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge"
-NPM_TENCENT_MIRROR="https://mirrors.cloud.tencent.com/npm/"
 
 WITH_PROXY=0
 WITH_DOCKER=0
@@ -63,7 +62,7 @@ Usage:
 Options:
   --proxy   Enable proxy environment only, without installing Xray.
   --docker  Install Docker.
-  --mirror  Configure package manager mirrors.
+  --mirror  Configure apt, uv, and pixi mirrors.
   -h, --help  Show this help message.
 EOF
 }
@@ -305,7 +304,7 @@ configure_tool_mirrors_if_requested() {
     return 0
   fi
 
-  log "Configuring uv, pixi, and Bun mirrors for ${TARGET_USER}"
+  log "Configuring uv and pixi mirrors for ${TARGET_USER}"
 
   install -d -m 0755 "${TARGET_HOME}/.config/uv" "${TARGET_HOME}/.config/pixi"
 
@@ -328,16 +327,10 @@ index-url = "${PYPI_USTC_MIRROR}"
 ]
 EOF
 
-  cat >"${TARGET_HOME}/.bunfig.toml" <<EOF
-[install]
-registry = "${NPM_TENCENT_MIRROR}"
-EOF
-
   if [[ "${IS_ROOT_TARGET}" -eq 0 ]]; then
     chown -R "${TARGET_USER}:${TARGET_USER}" \
       "${TARGET_HOME}/.config/uv" \
       "${TARGET_HOME}/.config/pixi"
-    chown "${TARGET_USER}:${TARGET_USER}" "${TARGET_HOME}/.bunfig.toml"
   fi
 }
 
