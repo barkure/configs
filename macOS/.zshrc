@@ -1,7 +1,4 @@
 # Homebrew
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
-export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Editor settings
@@ -9,22 +6,23 @@ export VISUAL=/opt/homebrew/bin/edit
 export EDITOR=/opt/homebrew/bin/edit
 
 # Network proxy
-export PROXY_URL="http://127.0.0.1:10809"
+export HTTP_PROXY_URL="http://127.1:10809"
+export SOCKS_PROXY_URL="socks5h://127.1:10808"
 export NO_PROXY_LIST="127.0.0.1,localhost,::1"
 
 proxy() {
-  export http_proxy="$PROXY_URL"
-  export https_proxy="$PROXY_URL"
-  export all_proxy="$PROXY_URL"
-  export ws_proxy="$PROXY_URL"
-  export wss_proxy="$PROXY_URL"
+  export http_proxy="$HTTP_PROXY_URL"
+  export https_proxy="$HTTP_PROXY_URL"
+  export all_proxy="$SOCKS_PROXY_URL"
+  export ws_proxy="$HTTP_PROXY_URL"
+  export wss_proxy="$HTTP_PROXY_URL"
   export no_proxy="$NO_PROXY_LIST"
 
   export HTTP_PROXY="$http_proxy"
   export HTTPS_PROXY="$https_proxy"
   export ALL_PROXY="$all_proxy"
-  export WS_PROXY="$PROXY_URL"
-  export WSS_PROXY="$PROXY_URL"
+  export WS_PROXY="$ws_proxy"
+  export WSS_PROXY="$wss_proxy"
   export NO_PROXY="$no_proxy"
 }
 
