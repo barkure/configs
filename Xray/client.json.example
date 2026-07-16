@@ -14,19 +14,14 @@
       },
       "sniffing": {
         "enabled": true,
-        "destOverride": [
-          "http",
-          "tls",
-          "quic"
-        ]
+        "destOverride": ["http", "tls", "quic"]
       }
     },
     {
       "tag": "http-in",
       "listen": "127.0.0.1",
       "port": 10809,
-      "protocol": "http",
-      "settings": {}
+      "protocol": "http"
     }
   ],
   "outbounds": [
@@ -36,13 +31,12 @@
       "settings": {
         "vnext": [
           {
-            "address": "your-xray-server.example.com",
+            "address": "your-server.example.com",
             "port": 443,
             "users": [
               {
                 "id": "00000000-0000-0000-0000-000000000000",
-                "encryption": "none",
-                "flow": ""
+                "encryption": "none"
               }
             ]
           }
@@ -54,21 +48,18 @@
         "realitySettings": {
           "serverName": "your-sni.example.com",
           "fingerprint": "chrome",
-          "publicKey": "replace-with-your-reality-public-key",
-          "shortId": "replace-with-your-short-id",
-          "spiderX": "/"
+          "publicKey": "your-reality-public-key-here",
+          "shortId": "your-short-id-here"
         }
       }
     },
     {
       "tag": "direct",
-      "protocol": "freedom",
-      "settings": {}
+      "protocol": "freedom"
     },
     {
       "tag": "block",
-      "protocol": "blackhole",
-      "settings": {}
+      "protocol": "blackhole"
     }
   ],
   "dns": {
@@ -81,24 +72,15 @@
     "servers": [
       {
         "address": "https://1.1.1.1/dns-query",
-        "domains": [
-          "geosite:geolocation-!cn"
-        ],
-        "expectIPs": [
-          "geoip:!cn"
-        ]
+        "domains": ["geosite:geolocation-!cn"],
+        "expectIPs": ["geoip:!cn"]
       },
       "8.8.8.8",
       {
         "address": "114.114.114.114",
         "port": 53,
-        "domains": [
-          "geosite:cn",
-          "geosite:category-games@cn"
-        ],
-        "expectIPs": [
-          "geoip:cn"
-        ],
+        "domains": ["geosite:cn", "geosite:category-games@cn"],
+        "expectIPs": ["geoip:cn"],
         "skipFallback": true
       },
       {
@@ -113,9 +95,7 @@
       {
         "type": "field",
         "outboundTag": "block",
-        "domain": [
-          "geosite:category-ads-all"
-        ]
+        "domain": ["geosite:category-ads-all"]
       },
       {
         "type": "field",
@@ -132,17 +112,12 @@
       {
         "type": "field",
         "outboundTag": "proxy",
-        "domain": [
-          "geosite:geolocation-!cn"
-        ]
+        "domain": ["geosite:geolocation-!cn"]
       },
       {
         "type": "field",
         "outboundTag": "direct",
-        "ip": [
-          "geoip:cn",
-          "geoip:private"
-        ]
+        "ip": ["geoip:cn", "geoip:private"]
       },
       {
         "type": "field",
