@@ -38,7 +38,7 @@ https://raw.githubusercontent.com/barkure/configs/main/Shadowrocket/custom.conf
 - `dns-direct-fallback-proxy = true`：直连域名解析失败自动走代理
 - `block-quic = all-proxy`：屏蔽走代理连接的 QUIC，回退 TCP
 - `skip-proxy`：追加银行域名（ccb / abchina / psbc）
-- `[Rule]`：新增 `# XAI/Grok` 段（x.ai / grok.com 走代理）
-- `[Host]`：apple / icloud 域名强制使用系统 DNS
+- `[Rule]`：新增 `# XAI/Grok` 段（x.ai / grok.com 走代理）；`# LAN` 段新增 `DOMAIN-SUFFIX,lan,DIRECT`（局域网域名直连）
+- `[Host]`：apple / icloud 域名强制使用系统 DNS；`*.lan` 用系统 DNS（即当前路由器）解析
 
 官方 App 更新后，用 `diff default.conf custom.conf` 对比决定是否同步。
