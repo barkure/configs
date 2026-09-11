@@ -43,13 +43,15 @@
         ]
       },
       "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "your-sni.example.com",
-          "fingerprint": "chrome",
-          "publicKey": "your-reality-public-key-here",
-          "shortId": "your-short-id-here"
+        "network": "xhttp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "your-server.example.com",
+          "alpn": ["h2", "http/1.1"]
+        },
+        "xhttpSettings": {
+          "path": "/xhttp",
+          "mode": "auto"
         }
       }
     },

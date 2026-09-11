@@ -2,25 +2,19 @@
 
 个人环境配置仓库：
 
-- `Debian/`：Debian / Ubuntu 新机器初始化脚本
+- `Debian/`：Debian / Ubuntu 新机器初始化规格书
 - `Xray/`：Xray 客户端与服务端配置示例
 - `Shadowrocket/`：Shadowrocket 分流配置
 
 ## Debian
 
-`Debian/init.sh` 初始化新机器（支持 Ubuntu 24.04+ / Debian 13+），安装常用工具并写入 `~/.zshrc`。
-
-```bash
-sudo ./init.sh [OPTIONS]          # 完整初始化（root / sudo）
-./init.sh --basic [--proxy] [--mirror]   # 无 sudo：只装用户态工具
+```text
+按 github.com/barkure/configs/Debian/setup.md 配置这台机器
 ```
-
-可选参数：`--basic`（免 root）、`--proxy`（只配代理环境）、`--docker`、`--mirror`（镜像源）、`-h`。
 
 ## Xray
 
-`Xray/` 提供 VLESS + REALITY 的客户端与服务端配置示例，复制 `.example` 文件并填入真实参数（UUID、密钥、SNI 等）后使用。
-
+VLESS + XHTTP + TLS 的客户端与服务端配置示例。
 ## Shadowrocket
 
 官方默认配置 + 少量补丁，不使用第三方大型规则集。
@@ -40,5 +34,3 @@ https://raw.githubusercontent.com/barkure/configs/main/Shadowrocket/custom.conf
 - `skip-proxy`：追加银行域名（ccb / abchina / psbc）
 - `[Rule]`：新增 `# XAI/Grok` 段（x.ai / grok.com 走代理）；`# LAN` 段新增 `DOMAIN-SUFFIX,lan,DIRECT`（局域网域名直连）
 - `[Host]`：apple / icloud 域名强制使用系统 DNS；`*.lan` 用系统 DNS（即当前路由器）解析
-
-官方 App 更新后，用 `diff default.conf custom.conf` 对比决定是否同步。
